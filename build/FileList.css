@@ -9137,3 +9137,46 @@ ul {
   padding: 0;
   margin-right: 8px;
   margin-bottom: 2px; }
+
+.pop_dialog.u-modal .pop_body, .pop_dialog.u-modal .pop_footer {
+  padding-left: 25px;
+  padding-right: 25px; }
+
+.pop_dialog.u-modal .pop_footer {
+  text-align: right;
+  padding: 7px 20px;
+  border-top: 1px solid #d0d0d0; }
+  .pop_dialog.u-modal .pop_footer button {
+    width: 66px; }
+
+.pop_dialog.u-modal .u-modal-header {
+  background-color: #f3f3f3;
+  font-size: 14px;
+  color: #111111;
+  font-weight: 700;
+  padding: 9px 20px; }
+  .pop_dialog.u-modal .u-modal-header h4 {
+    font-size: 16px;
+    color: #172b4d;
+    font-weight: normal; }
+
+.pop_dialog.u-modal .btn {
+  margin-left: 10px; }
+
+.pop_dialog.u-modal .pop_body .keyword {
+  font-size: 18px;
+  display: block;
+  color: #111111; }
+  .pop_dialog.u-modal .pop_body .keyword i {
+    font-size: 25px;
+    color: #ffbf00;
+    margin: 0px 10px; }
+
+.pop_dialog.u-modal .pop_body .pop_dialog-ctn {
+  font-size: 13px;
+  display: block;
+  color: #555555;
+  padding: 5px 55px; }
+
+.pop_dialog.u-modal .u-modal-dialog .u-modal-content .u-modal-footer {
+  text-align: right; }

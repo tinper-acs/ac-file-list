@@ -115,3 +115,63 @@
         }
     }
 }
+
+.pop_dialog.u-modal {
+    .pop_body, .pop_footer {
+        padding-left: 25px;
+        padding-right: 25px;
+    }
+
+    .pop_footer {
+        text-align: right;
+        padding: 7px 20px;
+        border-top: 1px solid rgb(208, 208, 208);
+        button {
+            width: 66px;
+        }
+
+    }
+
+    .u-modal-header {
+        background-color: rgb(243, 243, 243);
+        font-size: 14px;
+        color: rgb(17, 17, 17);
+        font-weight: 700;
+        padding: 9px 20px;
+        h4 {
+            font-size: 16px;
+            color: rgba(23, 43, 77, 1);
+            font-weight: normal;
+        }
+    }
+
+    .btn {
+        margin-left: 10px;
+    }
+    .pop_body{
+        .keyword{
+            font-size: 18px;
+            display: block;
+            color: rgb(17, 17, 17);
+            i{
+                font-size: 25px;
+                color: rgb(255, 191, 0);
+                margin: 0px 10px;
+            }
+        }
+        .pop_dialog-ctn{
+            font-size: 13px;
+            display: block;
+            color: rgb(85, 85, 85);
+            padding: 5px 55px;
+        }
+    }
+
+    .u-modal-dialog {
+        .u-modal-content {
+            .u-modal-footer {
+                text-align: right;
+            }
+        }
+    }
+}

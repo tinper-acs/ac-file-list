@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Upload from 'bee-upload';
 import ProgressBar from 'bee-progress-bar';
-import Icon from 'bee-icon'
+import Icon from 'bee-icon';
+import Modal from 'bee-modal';
 import AcGrid from 'ac-grids'
 import Btns from 'ac-btns';
 import cloneDeep from 'clone-deep';
@@ -142,7 +143,7 @@ class FileList extends Component {
                                     onClick: this.download
                                 },
                                 delete: {
-                                    onClick: this.delete
+                                    onClick: this.deleteConfirm
                                 },
                             }}
                         />
@@ -303,7 +304,7 @@ class FileList extends Component {
     
     /**删除 */
     delete=()=>{
-        let url = this.props.url.delete.replace('{id}',this.props.id);
+        let url = this.props.url.delete.replace('{id}',this.state.hoverData.id);
         request(url, {
             method: "delete",
             withCredentials:true
@@ -323,7 +324,7 @@ class FileList extends Component {
         })
     }
     download=()=>{
-        let url = this.props.url.info.replace('{id}',this.props.id)
+        let url = this.props.url.info.replace('{id}',this.state.hoverData.id)
         request(url, {
             method: "get",
             withCredentials:true
@@ -441,25 +442,44 @@ class FileList extends Component {
                         columns={this.columns} 
                         data={data} 
                         rowKey={(record,index)=>index}
-    
-                        // paginationObj={{
-                        //     activePage:this.state.pageNo,
-                        //     onSelect: this.pageIndexChange,
-                        //     onDataNumSelect: this.pageSizeChange,
-                        //     maxButton: 5,
-                        // }}
                         scroll = {{y:400}}
                         getSelectedDataFunc={this.getSelectedDataFunc}
-                        // hoverContent={this.hoverContent}
                         onRowHover={this.onRowHover}
                         multiSelect={false}
                     />
-                     
-                    {/* <Alert
-                        show={this.state.show}
-                        confirmFn={this.delete}
-                        cancelFn={this.cancelFn}
-                    /> */}
+                    <Modal
+                        size='sm'
+                        className='pop_dialog'
+                        show = { this.state.show }
+                        onHide = { this.cancelFn } >
+                            <Modal.Header closeButton>
+                                <Modal.Title>删除</Modal.Title>
+                            </Modal.Header>
+
+                            <Modal.Body className="pop_body">
+                                <div>
+                                    <span class="keyword">
+                                        <i class="uf uf-exc-c-2 "></i>删除
+                                    </span>
+                                    <span className="pop_dialog-ctn">
+                                        确认要删除吗？
+                                    </span>
+                                </div>
+                            </Modal.Body>
+
+                            <Modal.Footer className="pop_footer">
+                                <Btns
+                                    btns={{
+                                        confirm:{
+                                            onClick:this.delete
+                                        },
+                                        cancel:{
+                                            onClick:this.cancelFn
+                                        },
+                                    }}
+                                />
+                            </Modal.Footer>
+                    </Modal>
                 </div>
             </div>
         )

@@ -26,6 +26,10 @@ var _beeIcon = require('bee-icon');
 
 var _beeIcon2 = _interopRequireDefault(_beeIcon);
 
+var _beeModal = require('bee-modal');
+
+var _beeModal2 = _interopRequireDefault(_beeModal);
+
 var _acGrids = require('ac-grids');
 
 var _acGrids2 = _interopRequireDefault(_acGrids);
@@ -231,7 +235,7 @@ var FileList = function (_Component) {
         };
 
         _this["delete"] = function () {
-            var url = _this.props.url["delete"].replace('{id}', _this.props.id);
+            var url = _this.props.url["delete"].replace('{id}', _this.state.hoverData.id);
             (0, _axios2["default"])(url, {
                 method: "delete",
                 withCredentials: true
@@ -252,7 +256,7 @@ var FileList = function (_Component) {
         };
 
         _this.download = function () {
-            var url = _this.props.url.info.replace('{id}', _this.props.id);
+            var url = _this.props.url.info.replace('{id}', _this.state.hoverData.id);
             (0, _axios2["default"])(url, {
                 method: "get",
                 withCredentials: true
@@ -442,7 +446,7 @@ var FileList = function (_Component) {
                                     onClick: _this.download
                                 },
                                 "delete": {
-                                    onClick: _this["delete"]
+                                    onClick: _this.deleteConfirm
                                 }
                             }
                         })
@@ -548,20 +552,62 @@ var FileList = function (_Component) {
                     data: data,
                     rowKey: function rowKey(record, index) {
                         return index;
-                    }
-
-                    // paginationObj={{
-                    //     activePage:this.state.pageNo,
-                    //     onSelect: this.pageIndexChange,
-                    //     onDataNumSelect: this.pageSizeChange,
-                    //     maxButton: 5,
-                    // }}
-                    , scroll: { y: 400 },
-                    getSelectedDataFunc: this.getSelectedDataFunc
-                    // hoverContent={this.hoverContent}
-                    , onRowHover: this.onRowHover,
+                    },
+                    scroll: { y: 400 },
+                    getSelectedDataFunc: this.getSelectedDataFunc,
+                    onRowHover: this.onRowHover,
                     multiSelect: false
-                })
+                }),
+                _react2["default"].createElement(
+                    _beeModal2["default"],
+                    {
+                        size: 'sm',
+                        className: 'pop_dialog',
+                        show: this.state.show,
+                        onHide: this.cancelFn },
+                    _react2["default"].createElement(
+                        _beeModal2["default"].Header,
+                        { closeButton: true },
+                        _react2["default"].createElement(
+                            _beeModal2["default"].Title,
+                            null,
+                            '\u5220\u9664'
+                        )
+                    ),
+                    _react2["default"].createElement(
+                        _beeModal2["default"].Body,
+                        { className: 'pop_body' },
+                        _react2["default"].createElement(
+                            'div',
+                            null,
+                            _react2["default"].createElement(
+                                'span',
+                                { 'class': 'keyword' },
+                                _react2["default"].createElement('i', { 'class': 'uf uf-exc-c-2 ' }),
+                                '\u5220\u9664'
+                            ),
+                            _react2["default"].createElement(
+                                'span',
+                                { className: 'pop_dialog-ctn' },
+                                '\u786E\u8BA4\u8981\u5220\u9664\u5417\uFF1F'
+                            )
+                        )
+                    ),
+                    _react2["default"].createElement(
+                        _beeModal2["default"].Footer,
+                        { className: 'pop_footer' },
+                        _react2["default"].createElement(_acBtns2["default"], {
+                            btns: {
+                                confirm: {
+                                    onClick: this["delete"]
+                                },
+                                cancel: {
+                                    onClick: this.cancelFn
+                                }
+                            }
+                        })
+                    )
+                )
             )
         );
     };
