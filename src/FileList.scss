@@ -1,0 +1,117 @@
+@import '../node_modules/ac-btns/src/Btns.scss';
+@import '../node_modules/ac-grids/src/AcGrids.scss';
+
+@keyframes beLong
+{
+    from {width: 20%;}
+    to {width: 90%;}
+}
+@keyframes rotates
+{
+    from{transform: rotate(0deg)} 
+    to{transform: rotate(360deg)}
+}
+
+
+.ac-upload-list{
+    &-header{
+        height: 40px;
+        background: #fff;
+        padding-left: 12px;
+        padding-right: 20px;
+        line-height: 40px;
+        &>div{
+            display: inline-block;
+        }
+        &.close{
+            margin-left: 8px;
+            margin-right: 8px;
+            border: 1px solid #D0D0D0;
+            box-shadow: 0 1px 1px 0 rgba(0,0,0,.2);
+            border-radius: 3px;
+            .ac-upload-list-btns{
+                display: none;
+            }
+        }
+    }
+    &-text{
+        span{
+            font-weight: bold;
+            font-size: 13px;
+        }
+    }
+    &-btns{
+        float: right;
+    }
+    &-file-area.hide{
+        display: none;
+    }
+    .u-checkbox .u-checkbox-label:before{
+        position: relative;
+        left: -16px;
+    }
+    // .u-upload{
+    //     .ac-btns-upload[disabled]{
+
+    //     }
+    // }
+    .u-upload-list {
+        display: none;
+    }
+    .ac-grids-wrapper-pages{
+        display: none;
+    }
+    .ac-grids{
+        .u-table-thead th{
+            background: #f1f2f5;
+            color: #212121;
+        }
+        .name-space{
+            img{
+                height: 20px;
+                margin-right: 10px;
+            }
+        }
+    }
+    .ac-grid-cell{
+        .u-progress{
+            margin-top: 15px;
+            margin-bottom: 0;
+            margin-right: 20px;
+            .u-progress-bar{
+                background: #2196F3;
+            }
+        }
+        .u-progress.uploading{
+            .u-progress-bar{
+                animation: beLong 5s;
+                animation-fill-mode: forwards;
+            }
+        }
+        .upload-status.uploading{
+            color: #2196F3;
+            .uf-loadingstate{
+                animation: rotates 2s linear infinite;
+                display: inline-block;
+            }
+        }
+        .upload-status.error{
+            color: #e14c46;
+        }
+    }
+    .opt-btns{
+        .ac-btns {
+            button.ac-btns-item.u-button.ac-btns-write, button.ac-btns-item.u-button.ac-btns-write:hover{
+                color: #fff!important;
+                background: #505F79!important;
+                border-color: #505F79!important;
+                height: 26px;
+                font-size: 14px;
+                line-height: 26px;
+                padding: 0;
+                margin-right: 8px;
+                margin-bottom: 2px;
+            }
+        }
+    }
+}
