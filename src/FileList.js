@@ -18,6 +18,7 @@ const propTypes = {
     disabled:PropTypes.bool,
     getListNow:PropTypes.bool,//是否在willmonument时获得文件列表
     url:PropTypes.object,//地址
+    uploadProps:PropTypes.object,//附件上传参数
 };
 
 const defaultProps = {
@@ -30,7 +31,8 @@ const defaultProps = {
         "upload": `https://ezone-u8c-daily.yyuap.com/cooperation/rest/v1/file/caep/{id}/`,//上传
         "delete": `https://ezone-u8c-daily.yyuap.com/cooperation/rest/v1/file/{id}`,//下载 cooperation/rest/v1/file/5d639caaa957bd001936cec9  此处id为附件id
         "info":`https://ezone-u8c-daily.yyuap.com/cooperation/rest/v1/file/{id}/info/ `,//文件信息
-    }
+    },
+    uploadProps:{}
 };
 
 class FileList extends Component {
@@ -109,20 +111,20 @@ class FileList extends Component {
             width: 200,
             render:(text,record,index)=>{
                 if(record.uploadStatus=='error'){
-                    const uploadProps ={
+                    const uploadP = Object.assign({
                         name: 'files',
                         action:this.props.url.upload.replace('{id}',this.props.id),
                         onChange:this.fileChange,
                         multiple:true,
                         beforeUpload:this.reUpload,
                         withCredentials:true
-                    }
+                    },this.props.uploadProps);
                     return <div className="opt-btns">
                         <Btns
                             type='line'
                             btns={{
                                 reupload: {
-                                    node:<Upload {...uploadProps}>
+                                    node:<Upload {...uploadP}>
                                             <Btns type='line' btns={{ reupload:{} }}/>
                                         </Upload>
                                 },
@@ -249,19 +251,19 @@ class FileList extends Component {
     hoverContent=()=>{
         let hoverData = this.state.hoverData;
         if(hoverData.uploadStatus=='error'){
-            const uploadProps ={
+            const uploadP = Object.assign({
                 name: 'files',
                 action: this.props.url.upload.replace('{id}',this.props.id),
                 onChange:this.fileChange,
                 multiple:true,
                 beforeUpload:this.reUpload,
                 withCredentials:true
-            }
+            },this.props.uploadProps);
             return <div className="opt-btns">
                 <Btns
                     btns={{
                         reupload: {
-                            node:<Upload {...uploadProps}>
+                            node:<Upload {...uploadP}>
                                     <Btns type='line' btns={{ reupload:{} }}/>
                                 </Upload>
                         },
@@ -405,16 +407,16 @@ class FileList extends Component {
     }
 
     render(){
-        let { clsfix,id,disabled } = this.props;
+        let { clsfix,id,disabled,uploadProps } = this.props;
         let { data,open } = this.state;
-        const uploadProps ={
+        const uploadP =Object.assign({
             withCredentials:true,
             name: 'files',
             action: this.props.url.upload.replace('{id}',this.props.id),
             onChange:this.fileChange,
             multiple:true,
             beforeUpload:this.beforeUpload
-        }
+        },uploadProps) 
         return(
             <div className={clsfix}>
                 <div  className={open?`${clsfix}-header`:`${clsfix}-header close`}>
@@ -427,7 +429,7 @@ class FileList extends Component {
                             disabled?'':<Btns
                             btns={{
                                 upload:{
-                                    node:<Upload {...uploadProps}>
+                                    node:<Upload {...uploadP}>
                                             <Btns btns={{ upload:{} }}/>
                                         </Upload>
                                 },

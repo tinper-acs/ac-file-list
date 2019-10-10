@@ -63,7 +63,8 @@ var propTypes = {
     clsfix: _propTypes2["default"].string,
     disabled: _propTypes2["default"].bool,
     getListNow: _propTypes2["default"].bool, //是否在willmonument时获得文件列表
-    url: _propTypes2["default"].object //地址
+    url: _propTypes2["default"].object, //地址
+    uploadProps: _propTypes2["default"].object //附件上传参数
 };
 
 var defaultProps = {
@@ -76,7 +77,8 @@ var defaultProps = {
         "upload": 'https://ezone-u8c-daily.yyuap.com/cooperation/rest/v1/file/caep/{id}/', //上传
         "delete": 'https://ezone-u8c-daily.yyuap.com/cooperation/rest/v1/file/{id}', //下载 cooperation/rest/v1/file/5d639caaa957bd001936cec9  此处id为附件id
         "info": 'https://ezone-u8c-daily.yyuap.com/cooperation/rest/v1/file/{id}/info/ ' //文件信息
-    }
+    },
+    uploadProps: {}
 };
 
 var FileList = function (_Component) {
@@ -173,14 +175,14 @@ var FileList = function (_Component) {
         _this.hoverContent = function () {
             var hoverData = _this.state.hoverData;
             if (hoverData.uploadStatus == 'error') {
-                var uploadProps = {
+                var uploadP = _extends({
                     name: 'files',
                     action: _this.props.url.upload.replace('{id}', _this.props.id),
                     onChange: _this.fileChange,
                     multiple: true,
                     beforeUpload: _this.reUpload,
                     withCredentials: true
-                };
+                }, _this.props.uploadProps);
                 return _react2["default"].createElement(
                     'div',
                     { className: 'opt-btns' },
@@ -189,7 +191,7 @@ var FileList = function (_Component) {
                             reupload: {
                                 node: _react2["default"].createElement(
                                     _beeUpload2["default"],
-                                    uploadProps,
+                                    uploadP,
                                     _react2["default"].createElement(_acBtns2["default"], { type: 'line', btns: { reupload: {} } })
                                 )
                             },
@@ -404,14 +406,14 @@ var FileList = function (_Component) {
             width: 200,
             render: function render(text, record, index) {
                 if (record.uploadStatus == 'error') {
-                    var uploadProps = {
+                    var uploadP = _extends({
                         name: 'files',
                         action: _this.props.url.upload.replace('{id}', _this.props.id),
                         onChange: _this.fileChange,
                         multiple: true,
                         beforeUpload: _this.reUpload,
                         withCredentials: true
-                    };
+                    }, _this.props.uploadProps);
                     return _react2["default"].createElement(
                         'div',
                         { className: 'opt-btns' },
@@ -421,7 +423,7 @@ var FileList = function (_Component) {
                                 reupload: {
                                     node: _react2["default"].createElement(
                                         _beeUpload2["default"],
-                                        uploadProps,
+                                        uploadP,
                                         _react2["default"].createElement(_acBtns2["default"], { type: 'line', btns: { reupload: {} } })
                                     )
                                 },
@@ -499,19 +501,20 @@ var FileList = function (_Component) {
         var _props = this.props,
             clsfix = _props.clsfix,
             id = _props.id,
-            disabled = _props.disabled;
+            disabled = _props.disabled,
+            uploadProps = _props.uploadProps;
         var _state = this.state,
             data = _state.data,
             open = _state.open;
 
-        var uploadProps = {
+        var uploadP = _extends({
             withCredentials: true,
             name: 'files',
             action: this.props.url.upload.replace('{id}', this.props.id),
             onChange: this.fileChange,
             multiple: true,
             beforeUpload: this.beforeUpload
-        };
+        }, uploadProps);
         return _react2["default"].createElement(
             'div',
             { className: clsfix },
@@ -536,7 +539,7 @@ var FileList = function (_Component) {
                             upload: {
                                 node: _react2["default"].createElement(
                                     _beeUpload2["default"],
-                                    uploadProps,
+                                    uploadP,
                                     _react2["default"].createElement(_acBtns2["default"], { btns: { upload: {} } })
                                 )
                             }
