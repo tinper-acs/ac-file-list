@@ -3,8 +3,28 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.getCookie = exports.getFileNames = exports.getExtImg = exports.getSize = undefined;
 exports.dateFormate = dateFormate;
-/**文件类型图标 */
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+/**
+ * 计算文件大小
+ * @param {number} size  文件大小 kb
+ */
+var getSize = exports.getSize = function getSize(size) {
+    var unit = 'KB';
+    size = Math.ceil(size / 1024);
+    if (size >= 1024) {
+        unit = 'MB';
+        size = Math.ceil(size / 1024);
+    }
+    return size + unit;
+}; /**文件类型图标 */
 // import ai from './fileType/ai.svg';
 // import audio from './fileType/audio.svg';
 // import box_notes from './fileType/box_notes.svg';
@@ -37,22 +57,6 @@ exports.dateFormate = dateFormate;
 // import word from './fileType/word.svg';
 // import xml from './fileType/xml.svg';
 // import zip from './fileType/zip.svg';
-
-
-/**
- * 计算文件大小
- * @param {number} size  文件大小 kb
- */
-var getSize = exports.getSize = function getSize(size) {
-    var unit = 'KB';
-    size = Math.ceil(size / 1024);
-    if (size >= 1024) {
-        unit = 'MB';
-        size = Math.ceil(size / 1024);
-    }
-    return size + unit;
-};
-
 var getExtImg = exports.getExtImg = function getExtImg(ext) {
     //所有图片
     var imgExts = ['jpg', 'webp', 'bmp', 'pcx', 'tif', 'gif', 'jpeg', 'tga', 'exif', 'fpx', 'svg', 'psd', 'cdr', 'pcd', 'dxf', 'ufo', 'eps', 'png', 'hdri', 'raw', 'wmf', 'flic', 'emf', 'ico'];
@@ -178,10 +182,10 @@ var getExtImg = exports.getExtImg = function getExtImg(ext) {
  */
 var getFileNames = exports.getFileNames = function getFileNames(name, ext) {
     ext = ext.split('.')[1];
-    return React.createElement(
+    return _react2["default"].createElement(
         'span',
         { className: 'name-space', title: name + ext },
-        React.createElement(
+        _react2["default"].createElement(
             'span',
             null,
             ' ',

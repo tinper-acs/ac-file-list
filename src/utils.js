@@ -31,7 +31,7 @@
 // import word from './fileType/word.svg';
 // import xml from './fileType/xml.svg';
 // import zip from './fileType/zip.svg';
-
+import React, { Component } from 'react';
 
 /**
  * 计算文件大小
