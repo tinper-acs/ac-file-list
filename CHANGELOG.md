@@ -1,3 +1,13 @@
+<a name="0.0.4"></a>
+## [0.0.4](https://github.com/tinper-bee/ac-file-list/compare/v0.0.3...v0.0.4) (2019-10-10)
+
+
+### Features
+
+* **ac-file-list:** 限制文件上传类型等熟悉 ([4d34d47](https://github.com/tinper-bee/ac-file-list/commit/4d34d47))
+
+
+
 <a name="0.0.3"></a>
 ## [0.0.3](https://github.com/tinper-bee/ac-file-list/compare/v0.0.2...v0.0.3) (2019-10-10)
 
