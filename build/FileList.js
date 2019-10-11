@@ -71,7 +71,7 @@ var defaultProps = {
     id: '',
     clsfix: 'ac-upload-list',
     disabled: false,
-    getListNow: true,
+    getListNow: false,
     url: { // {id} 替换为 props.id
         "list": 'https://ezone-u8c-daily.yyuap.com/cooperation/rest/v1/file/caep/{id}/files', //文件列表
         "upload": 'https://ezone-u8c-daily.yyuap.com/cooperation/rest/v1/file/caep/{id}/', //上传
@@ -468,6 +468,9 @@ var FileList = function (_Component) {
             this.setState({
                 id: nextProps.id
             });
+            this.getList({}, nextProps.id);
+        }
+        if (nextProps.getListNow && !this.props.getListNow && nextProps.id) {
             this.getList({}, nextProps.id);
         }
     };
