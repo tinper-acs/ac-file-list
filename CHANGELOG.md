@@ -1,3 +1,13 @@
+<a name="0.1.0"></a>
+# [0.1.0](https://github.com/tinper-bee/ac-file-list/compare/v0.0.6...v0.1.0) (2019-10-11)
+
+
+### Features
+
+* **ac-file-list:** 依赖改为bee-table ([b95bb9d](https://github.com/tinper-bee/ac-file-list/commit/b95bb9d))
+
+
+
 <a name="0.0.6"></a>
 ## [0.0.6](https://github.com/tinper-bee/ac-file-list/compare/v0.0.5...v0.0.6) (2019-10-11)
 
