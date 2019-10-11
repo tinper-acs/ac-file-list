@@ -30,9 +30,9 @@ var _beeModal = require('bee-modal');
 
 var _beeModal2 = _interopRequireDefault(_beeModal);
 
-var _acGrids = require('ac-grids');
+var _beeTable = require('bee-table');
 
-var _acGrids2 = _interopRequireDefault(_acGrids);
+var _beeTable2 = _interopRequireDefault(_beeTable);
 
 var _acBtns = require('ac-btns');
 
@@ -286,7 +286,7 @@ var FileList = function (_Component) {
                 _this.setState({
                     data: data
                 });
-                console.log('上传成功');
+                console.log('upload Success');
             }
             if (info.file.status === 'error') {
                 console.error(info.file.name + ' file upload failed.');
@@ -553,7 +553,7 @@ var FileList = function (_Component) {
             _react2["default"].createElement(
                 'div',
                 { className: open ? clsfix + '-file-area' : clsfix + '-file-area hide' },
-                _react2["default"].createElement(_acGrids2["default"], {
+                _react2["default"].createElement(_beeTable2["default"], {
                     columns: this.columns,
                     data: data,
                     rowKey: function rowKey(record, index) {
@@ -563,6 +563,7 @@ var FileList = function (_Component) {
                     getSelectedDataFunc: this.getSelectedDataFunc,
                     onRowHover: this.onRowHover,
                     multiSelect: false
+
                 }),
                 _react2["default"].createElement(
                     _beeModal2["default"],

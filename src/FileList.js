@@ -4,7 +4,7 @@ import Upload from 'bee-upload';
 import ProgressBar from 'bee-progress-bar';
 import Icon from 'bee-icon';
 import Modal from 'bee-modal';
-import AcGrid from 'ac-grids'
+import Table from 'bee-table'
 import Btns from 'ac-btns';
 import cloneDeep from 'clone-deep';
 import request from 'axios';
@@ -371,7 +371,7 @@ class FileList extends Component {
             this.setState({
                 data
             })
-            console.log('上传成功')
+            console.log('upload Success')
         }  
         if (info.file.status === 'error') {
             console.error(`${info.file.name} file upload failed.`);
@@ -443,7 +443,7 @@ class FileList extends Component {
                     </div>
                 </div>
                 <div className={open?`${clsfix}-file-area`:`${clsfix}-file-area hide`}>
-                    <AcGrid  
+                    <Table  
                         columns={this.columns} 
                         data={data} 
                         rowKey={(record,index)=>index}
@@ -451,6 +451,7 @@ class FileList extends Component {
                         getSelectedDataFunc={this.getSelectedDataFunc}
                         onRowHover={this.onRowHover}
                         multiSelect={false}
+
                     />
                     <Modal
                         size='sm'
