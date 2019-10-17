@@ -173,7 +173,7 @@ class FileList extends Component {
     getList=(pageObj={},propsId)=>{
         let id = propsId||this.props.id;
         if(id){
-            let url = this.props.url.list.replace('{id}',this.props.id)
+            let url = this.props.url.list.replace('{id}',id)
             let params=Object.assign({
                 pageSize:this.state.pageSize,
                 fileName:'',

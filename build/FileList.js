@@ -95,7 +95,7 @@ var FileList = function (_Component) {
 
             var id = propsId || _this.props.id;
             if (id) {
-                var url = _this.props.url.list.replace('{id}', _this.props.id);
+                var url = _this.props.url.list.replace('{id}', id);
                 var params = _extends({
                     pageSize: _this.state.pageSize,
                     fileName: '',
