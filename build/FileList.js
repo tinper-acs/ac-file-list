@@ -470,8 +470,11 @@ var FileList = function (_Component) {
             });
             this.getList({}, nextProps.id);
         }
-        if (nextProps.getListNow && !this.props.getListNow && nextProps.id) {
+        if (nextProps.getListNow && !this.props.getListNow && nextProps.id && nextProps.id != this.state.id) {
             this.getList({}, nextProps.id);
+            this.setState({
+                id: nextProps.id
+            });
         }
     };
 

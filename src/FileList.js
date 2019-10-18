@@ -164,8 +164,11 @@ class FileList extends Component {
             })
             this.getList({},nextProps.id)
         }
-        if(nextProps.getListNow&&(!this.props.getListNow)&&nextProps.id){
-            this.getList({},nextProps.id)
+        if(nextProps.getListNow&&(!this.props.getListNow)&&nextProps.id&&(nextProps.id!=this.state.id)){
+            this.getList({},nextProps.id);
+            this.setState({
+                id:nextProps.id
+            })
         }
     }
 
