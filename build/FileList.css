@@ -150,6 +150,8 @@
 
 .ac-upload-list-file-area .u-table {
   width: 100%; }
+  .ac-upload-list-file-area .u-table .u-table-placeholder .table-nodata {
+    position: relative; }
   .ac-upload-list-file-area .u-table .u-table-fixed-left tr td:first-child,
   .ac-upload-list-file-area .u-table .u-table-fixed-left tr th:first-child,
   .ac-upload-list-file-area .u-table .u-table-scroll tr td:first-child,

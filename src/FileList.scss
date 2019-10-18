@@ -78,6 +78,9 @@
         }
         .u-table {
             width: 100%;
+            .u-table-placeholder .table-nodata{
+                position:relative;
+            }
             .u-table-fixed-left tr td:first-child,
             .u-table-fixed-left tr th:first-child,
             .u-table-scroll tr td:first-child,
