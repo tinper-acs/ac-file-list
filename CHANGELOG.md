@@ -1,3 +1,8 @@
+<a name="0.1.3"></a>
+## [0.1.3](https://github.com/tinper-bee/ac-file-list/compare/v0.1.1...v0.1.3) (2019-10-18)
+
+
+
 <a name="0.1.1"></a>
 ## [0.1.1](https://github.com/tinper-bee/ac-file-list/compare/v0.1.0...v0.1.1) (2019-10-11)
 
