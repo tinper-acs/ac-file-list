@@ -9,9 +9,8 @@
 ## 如何使用
 
 ```js
-    import Btns from 'ac-btns';
-    import 'ac-btns/build/Btns.css';
-
+    import Btns from 'ac-file-list';
+    import 'ac-file-list/build/FileList.css';
 ```
 
 ## 代码演示
