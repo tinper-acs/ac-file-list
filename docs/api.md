@@ -9,8 +9,8 @@
 ## 如何使用
 
 ```js
-    import FileList from 'ac-file-list';
-    import 'ac-file-list/build/FileList.css';
+import FileList from 'ac-file-list';
+import 'ac-file-list/build/FileList.css';
 ```
 
 ## 代码演示
