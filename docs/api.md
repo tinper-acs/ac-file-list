@@ -9,7 +9,7 @@
 ## 如何使用
 
 ```js
-    import Btns from 'ac-file-list';
+    import FileList from 'ac-file-list';
     import 'ac-file-list/build/FileList.css';
 ```
 
