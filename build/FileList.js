@@ -405,7 +405,7 @@ var FileList = function (_Component) {
                 } else if (record.uploadStatus == 'error') {
                     return _react2["default"].createElement(
                         'span',
-                        { className: 'upload-status error' },
+                        { className: 'upload-status error', title: record.errorMsg || _this.localObj.uploadError },
                         ' ',
                         _react2["default"].createElement(_beeIcon2["default"], { type: 'uf-exc-c' }),
                         record.errorMsg || _this.localObj.uploadError

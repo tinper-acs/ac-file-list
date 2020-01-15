@@ -100,7 +100,7 @@ class FileList extends Component {
                 if(record.uploadStatus=='uploading'){
                     return <span className='upload-status uploading'> <Icon type='uf-loadingstate'/> {this.localObj.uploading} </span>
                 }else if(record.uploadStatus=='error'){
-                    return <span className='upload-status error'> <Icon type='uf-exc-c'/>{record.errorMsg||this.localObj.uploadError}</span>
+                    return <span className='upload-status error' title={record.errorMsg||this.localObj.uploadError}> <Icon type='uf-exc-c'/>{record.errorMsg||this.localObj.uploadError}</span>
                 }else if(record.uploadStatus=='done'){
                     return dateFormate(new Date(),'yyyy-MM-dd hh:mm')
                 }else{
