@@ -8,8 +8,8 @@ import Table from 'bee-table'
 import Btns from 'ac-btns';
 import cloneDeep from 'clone-deep';
 import request from 'axios';
-import { getSize, getFileNames,dateFormate,getCookie } from './utils.js'
-
+import { getSize, getFileNames,dateFormate,getCookie } from './utils.js';
+import i18n from './i18n.js'
 
 
 const propTypes = {
@@ -34,7 +34,8 @@ const defaultProps = {
         "info":`https://ezone-u8c-daily.yyuap.com/cooperation/rest/v1/file/{id}/info/ `,//文件信息
     },
     uploadProps:{},
-    powerBtns:['upload','reupload','download','delete','confirm','cancel']
+    powerBtns:['upload','reupload','download','delete','confirm','cancel'],
+    localeCookie:'locale',
 };
 
 class FileList extends Component {
@@ -50,8 +51,9 @@ class FileList extends Component {
             id:props.id,
             open:true
         }
+        this.localObj = i18n[getCookie(props.localeCookie)]||i18n['zh_CN'];
         this.columns = [{
-            title: "附件名称",
+            title: this.localObj.fileName,
             dataIndex: "fileName",
             key: "fileName",
             className: "rowClassName",
@@ -61,19 +63,19 @@ class FileList extends Component {
             }
         },
         {
-            title: "文件类型",
+            title: this.localObj.fileExtension,
             dataIndex: "fileExtension",
             key: "fileExtension",
             width: 100
         },
         {
-            title: "文件大小",
+            title: this.localObj.fileSize,
             dataIndex: "fileSizeText",
             key: "fileSizeText",
             width: 100
         },
         {
-            title: "上传人",
+            title: this.localObj.createrUser,
             dataIndex: "userName",
             key: "userName",
             width: 200,
@@ -90,15 +92,15 @@ class FileList extends Component {
             }
         },
         {
-            title: "上传时间",
+            title: this.localObj.createrTime,
             dataIndex: "ctime",
             key: "ctime",
             width: 200,
             render:(text,record,index)=>{
                 if(record.uploadStatus=='uploading'){
-                    return <span className='upload-status uploading'> <Icon type='uf-loadingstate'/> 正在上传 </span>
+                    return <span className='upload-status uploading'> <Icon type='uf-loadingstate'/> {this.localObj.uploading} </span>
                 }else if(record.uploadStatus=='error'){
-                    return <span className='upload-status error'> <Icon type='uf-exc-c'/>文件上传错误</span>
+                    return <span className='upload-status error'> <Icon type='uf-exc-c'/>{record.errorMsg||this.localObj.uploadError}</span>
                 }else if(record.uploadStatus=='done'){
                     return dateFormate(new Date(),'yyyy-MM-dd hh:mm')
                 }else{
@@ -107,7 +109,7 @@ class FileList extends Component {
             }
         },
         {
-            title: "操作",
+            title: this.localObj.operation,
             dataIndex: "e",
             key: "e",
             width: 200,
@@ -122,13 +124,13 @@ class FileList extends Component {
                         withCredentials:true
                     },this.props.uploadProps);
                     return <div className="opt-btns">
-                        <Btns
+                        <Btns localeCookie={this.props.localeCookie}
                             powerBtns={this.props.powerBtns}
                             type='line'
                             btns={{
                                 reupload: {
                                     node:<Upload {...uploadP}>
-                                            <Btns powerBtns={this.props.powerBtns} type='line' btns={{ reupload:{} }}/>
+                                            <Btns localeCookie={this.props.localeCookie} powerBtns={this.props.powerBtns} type='line' btns={{ reupload:{} }}/>
                                         </Upload>
                                 },
                                 delete: {
@@ -142,7 +144,7 @@ class FileList extends Component {
                     return <div className="opt-btns"></div>
                 }else{
                     return <div className="opt-btns">
-                        <Btns
+                        <Btns localeCookie={props.localeCookie}
                             type='line'
                             btns={{
                                 download: {
@@ -200,10 +202,12 @@ class FileList extends Component {
                             pageNo:params.pageNo
                         })
                     }
+                }else{
+                    console.error(this.localObj['interfaceError'])
                 }
             }).catch(error=>{
+                console.error(this.localObj['interfaceError'])
                 console.error(error)
-                console.error(error.message||'Get File Error')
             })
         }
         
@@ -271,11 +275,12 @@ class FileList extends Component {
                 withCredentials:true
             },this.props.uploadProps);
             return <div className="opt-btns">
-                <Btns  powerBtns={this.props.powerBtns}
+                <Btns localeCookie={this.props.localeCookie}
+                    powerBtns={this.props.powerBtns}
                     btns={{
                         reupload: {
                             node:<Upload {...uploadP}>
-                                    <Btns type='line' powerBtns={this.props.powerBtns} btns={{ reupload:{} }}/>
+                                    <Btns localeCookie={this.props.localeCookie} type='line' powerBtns={this.props.powerBtns} btns={{ reupload:{} }}/>
                                 </Upload>
                         },
                         delete: {
@@ -288,7 +293,7 @@ class FileList extends Component {
             return <div className="opt-btns"></div>
         }else{
             return <div className="opt-btns">
-                <Btns
+                <Btns localeCookie={this.props.localeCookie}
                     powerBtns={this.props.powerBtns}
                     type='line'
                     btns={{
@@ -324,7 +329,7 @@ class FileList extends Component {
             withCredentials:true
         }).then((res)=>{
             if(res.status==200){
-                console.log('删除成功');
+                console.log(this.localObj['delSuccess']);
                 this.getList()
                 this.setState({
                     show:false
@@ -365,7 +370,6 @@ class FileList extends Component {
 
     fileChange=(info)=> {
         let data = cloneDeep(this.state.data);
-        
         if (info.file.status !== 'uploading') {
 
         }
@@ -382,11 +386,13 @@ class FileList extends Component {
             })
             console.log('upload Success')
         }  
-        if (info.file.status === 'error') {
+        if (info.file.status === 'removed') {
+            let msg = info.file.response.displayMessage[getCookie(this.props.localeCookie)]||info.file.response.displayMessage['zh_CN']
             console.error(`${info.file.name} file upload failed.`);
             data.forEach(item=>{
                 if(item.uid==info.file.uid){
                     item.uploadStatus='error';
+                    item.errorMsg = msg;
                 }
             });
             this.setState({
@@ -434,16 +440,16 @@ class FileList extends Component {
                 <div  className={open?`${clsfix}-header`:`${clsfix}-header close`}>
                     <div className={`${clsfix}-text`} onClick={this.changeOpenStatus}>
                         <Icon type={open?'uf-triangle-down':'uf-triangle-right'}></Icon>
-                        <span>附件</span>
+                        <span>{this.localObj.file}</span>
                     </div>
                     <div className={`${clsfix}-btns`}>
                         {
-                            disabled?'':<Btns
+                            disabled?'':<Btns localeCookie={this.props.localeCookie}
                             powerBtns={this.props.powerBtns}
                             btns={{
                                 upload:{
                                     node:<Upload {...uploadP}>
-                                            <Btns powerBtns={this.props.powerBtns} btns={{ upload:{} }}/>
+                                            <Btns localeCookie={this.props.localeCookie} powerBtns={this.props.powerBtns} btns={{ upload:{} }}/>
                                         </Upload>
                                 },
                             }}
@@ -469,22 +475,23 @@ class FileList extends Component {
                         show = { this.state.show }
                         onHide = { this.cancelFn } >
                             <Modal.Header closeButton>
-                                <Modal.Title>删除</Modal.Title>
+                                <Modal.Title>{this.localObj.delete}</Modal.Title>
                             </Modal.Header>
 
                             <Modal.Body className="pop_body">
                                 <div>
                                     <span class="keyword">
-                                        <i class="uf uf-exc-c-2 "></i>删除
+                                        <i class="uf uf-exc-c-2 "></i>{this.localObj.delete}
                                     </span>
                                     <span className="pop_dialog-ctn">
-                                        确认要删除吗？
+                                        {this.localObj.delSure}
                                     </span>
                                 </div>
                             </Modal.Body>
 
                             <Modal.Footer className="pop_footer">
-                                <Btns powerBtns={this.props.powerBtns}
+                                <Btns localeCookie={this.props.localeCookie}
+                                    powerBtns={this.props.powerBtns}
                                     btns={{
                                         confirm:{
                                             onClick:this.delete
