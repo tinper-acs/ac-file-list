@@ -1,3 +1,13 @@
+<a name="0.1.8"></a>
+## [0.1.8](https://github.com/tinper-bee/ac-file-list/compare/v0.1.7...v0.1.8) (2020-01-15)
+
+
+### Features
+
+* **ac-file-list:** 错误提示+多语 ([0865bbd](https://github.com/tinper-bee/ac-file-list/commit/0865bbd))
+
+
+
 <a name="0.1.7"></a>
 ## [0.1.7](https://github.com/tinper-bee/ac-file-list/compare/v0.1.6...v0.1.7) (2019-12-20)
 
