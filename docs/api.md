@@ -25,6 +25,7 @@ import 'ac-file-list/build/FileList.css';
 |url|列表、上传、删除、详情(查询下载地址)接口地址|object|默认值往下看url配置|
 |uploadProps|上传参数，参考 [bee-upload API](http://bee.tinper.org/tinper-bee/bee-upload)|object|{}|
 |powerBtns|可用按钮集合，有以下可选 upload(上传)、reupload(重新上传)、download(下载)、delete(删除)|['upload','reupload','download','delete','confirm','cancel']|
+|localeCookie|获取多语cookie的key值|string|locale|
 
 
 ### url配置
