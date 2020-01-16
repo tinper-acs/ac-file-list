@@ -52,10 +52,6 @@ var _i18n = require('./i18n.js');
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
-var _acTips = require('ac-tips');
-
-var _acTips2 = _interopRequireDefault(_acTips);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
@@ -75,7 +71,8 @@ var propTypes = {
     getListNow: _propTypes2["default"].bool, //是否在willmonument时获得文件列表
     url: _propTypes2["default"].object, //地址
     uploadProps: _propTypes2["default"].object, //附件上传参数
-    powerBtns: _propTypes2["default"].array //可用按钮集合
+    powerBtns: _propTypes2["default"].array, //可用按钮集合
+    callback: _propTypes2["default"].func //回调 第一个参数：成功(success)/失败(error)； 第二个参数：list 获得文件列表；delete 删除； upload 上传。 第三个参数：成功信息/错误信息。 第四个参数：null/error对象
 };
 
 var defaultProps = {
@@ -91,7 +88,8 @@ var defaultProps = {
     },
     uploadProps: {},
     powerBtns: ['upload', 'reupload', 'download', 'delete', 'confirm', 'cancel'],
-    localeCookie: 'locale'
+    localeCookie: 'locale',
+    callback: function callback() {}
 };
 
 var FileList = function (_Component) {
@@ -127,17 +125,12 @@ var FileList = function (_Component) {
                                 pageNo: params.pageNo
                             });
                         }
+                        _this.props.callback('success', 'list', _this.localObj['listSuccess']);
                     } else {
-                        _acTips2["default"].create({
-                            type: 'error',
-                            content: _this.localObj['interfaceError']
-                        });
+                        _this.props.callback('error', 'list', _this.localObj['listError'], res);
                     }
                 })["catch"](function (error) {
-                    _acTips2["default"].create({
-                        type: 'error',
-                        content: _this.localObj['interfaceError']
-                    });
+                    _this.props.callback('error', 'list', _this.localObj['interfaceError'], error);
                     console.error(error);
                 });
             }
@@ -266,24 +259,20 @@ var FileList = function (_Component) {
                 withCredentials: true
             }).then(function (res) {
                 if (res.status == 200) {
-                    _acTips2["default"].create({
-                        type: 'success',
-                        content: _this.localObj['delSuccess']
-                    });
+                    _this.props.callback('success', 'delete', _this.localObj['delSuccess']);
                     console.log(_this.localObj['delSuccess']);
                     _this.getList();
                     _this.setState({
                         show: false
                     });
+                } else {
+                    _this.props.callback('error', 'delete', _this.localObj['delSuccess'], res);
                 }
             })["catch"](function (error) {
                 _this.setState({
                     show: false
                 });
-                _acTips2["default"].create({
-                    type: 'error',
-                    content: _this.localObj['delError']
-                });
+                _this.props.callback('error', 'delete', _this.localObj['delSuccess'], error);
                 console.error(error);
             });
         };
@@ -296,12 +285,13 @@ var FileList = function (_Component) {
             }).then(function (res) {
                 if (res.status == 200) {
                     window.open(res.data.filePath);
+                    _this.props.callback('success', 'download', _this.localObj['downloadSuccess']);
+                    console.log(_this.localObj['downloadSuccess']);
+                } else {
+                    _this.props.callback('error', 'download', _this.localObj['downloadError'], res);
                 }
             })["catch"](function (error) {
-                _acTips2["default"].create({
-                    type: 'error',
-                    content: _this.localObj['interfaceError']
-                });
+                _this.props.callback('error', 'download', _this.localObj['interfaceError'], error);
                 console.error(error);
             });
         };
@@ -320,11 +310,13 @@ var FileList = function (_Component) {
                 _this.setState({
                     data: data
                 });
-                console.log('upload Success');
+                _this.props.callback('success', 'upload', _this.localObj['uploadSuccess']);
+                console.log(_this.localObj['uploadSuccess']);
             }
             if (info.file.status === 'removed') {
                 var msg = info.file.response.displayMessage[(0, _utils.getCookie)(_this.props.localeCookie)] || info.file.response.displayMessage['zh_CN'];
-                console.error(info.file.name + ' file upload failed.');
+                console.error(info.file.name + ' ' + _this.localObj['uploadError']);
+                _this.props.callback('error', 'upload', _this.localObj['uploadError'], info.file.response);
                 data.forEach(function (item) {
                     if (item.uid == info.file.uid) {
                         item.uploadStatus = 'error';
@@ -464,7 +456,10 @@ var FileList = function (_Component) {
                                     node: _react2["default"].createElement(
                                         _beeUpload2["default"],
                                         uploadP,
-                                        _react2["default"].createElement(_acBtns2["default"], { localeCookie: _this.props.localeCookie, powerBtns: _this.props.powerBtns, type: 'line', btns: { reupload: {} } })
+                                        _react2["default"].createElement(_acBtns2["default"], { localeCookie: _this.props.localeCookie,
+                                            powerBtns: _this.props.powerBtns,
+                                            type: 'line',
+                                            btns: { reupload: {} } })
                                     )
                                 },
                                 "delete": {

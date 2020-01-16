@@ -80,7 +80,7 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var Demo1 = __webpack_require__(307);var DemoArray = [{ "example": _react2['default'].createElement(Demo1, null), "title": " 这是标题", "code": "/**\n*\n* @title 这是标题\n* @description 这是描述\n*\n*/\nimport React, { Component } from 'react';\nimport FileList from 'ac-file-list';\n\nclass Demo1 extends Component {\n    render () {\n        return (\n                <div>\n                    <FileList id=\"5d9d738eede08100180575d5\" uploadProps={{\n                        accept:\"image/*\"\n                    }}\n                    />\n                </div>\n            )   \n    }\n}\nexport default Demo1", "desc": " 这是描述" }];
+	var Demo1 = __webpack_require__(307);var DemoArray = [{ "example": _react2['default'].createElement(Demo1, null), "title": " 这是标题", "code": "/**\n*\n* @title 这是标题\n* @description 这是描述\n*\n*/\nimport React, { Component } from 'react';\nimport FileList from 'ac-file-list';\n\nclass Demo1 extends Component {\n    render () {\n        return (\n                <div>\n                    <FileList id=\"5d9d738eede08100180575d5\" uploadProps={{\n                        accept:\"image/*\"\n                    }}\n                    callback={(a,b,c,d)=>{console.log(a,b,c,d)}}\n                    />\n                </div>\n            )   \n    }\n}\nexport default Demo1", "desc": " 这是描述" }];
 	
 	var Demo = function (_Component) {
 	    (0, _inherits3['default'])(Demo, _Component);
@@ -37939,6 +37939,9 @@
 	            null,
 	            _react2['default'].createElement(_src2['default'], { id: '5d9d738eede08100180575d5', uploadProps: {
 	                    accept: "image/*"
+	                },
+	                callback: function callback(a, b, c, d) {
+	                    console.log(a, b, c, d);
 	                }
 	            })
 	        );
@@ -38045,10 +38048,6 @@
 	
 	var _i18n2 = _interopRequireDefault(_i18n);
 	
-	var _acTips = __webpack_require__(659);
-	
-	var _acTips2 = _interopRequireDefault(_acTips);
-	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
 	var propTypes = {
@@ -38058,7 +38057,8 @@
 	    getListNow: _propTypes2['default'].bool, //是否在willmonument时获得文件列表
 	    url: _propTypes2['default'].object, //地址
 	    uploadProps: _propTypes2['default'].object, //附件上传参数
-	    powerBtns: _propTypes2['default'].array //可用按钮集合
+	    powerBtns: _propTypes2['default'].array, //可用按钮集合
+	    callback: _propTypes2['default'].func //回调 第一个参数：成功(success)/失败(error)； 第二个参数：list 获得文件列表；delete 删除； upload 上传。 第三个参数：成功信息/错误信息。 第四个参数：null/error对象
 	};
 	
 	var defaultProps = {
@@ -38074,7 +38074,8 @@
 	    },
 	    uploadProps: {},
 	    powerBtns: ['upload', 'reupload', 'download', 'delete', 'confirm', 'cancel'],
-	    localeCookie: 'locale'
+	    localeCookie: 'locale',
+	    callback: function callback() {}
 	};
 	
 	var FileList = function (_Component) {
@@ -38110,17 +38111,12 @@
 	                                pageNo: params.pageNo
 	                            });
 	                        }
+	                        _this.props.callback('success', 'list', _this.localObj['listSuccess']);
 	                    } else {
-	                        _acTips2['default'].create({
-	                            type: 'error',
-	                            content: _this.localObj['interfaceError']
-	                        });
+	                        _this.props.callback('error', 'list', _this.localObj['listError'], res);
 	                    }
 	                })['catch'](function (error) {
-	                    _acTips2['default'].create({
-	                        type: 'error',
-	                        content: _this.localObj['interfaceError']
-	                    });
+	                    _this.props.callback('error', 'list', _this.localObj['interfaceError'], error);
 	                    console.error(error);
 	                });
 	            }
@@ -38249,24 +38245,20 @@
 	                withCredentials: true
 	            }).then(function (res) {
 	                if (res.status == 200) {
-	                    _acTips2['default'].create({
-	                        type: 'success',
-	                        content: _this.localObj['delSuccess']
-	                    });
+	                    _this.props.callback('success', 'delete', _this.localObj['delSuccess']);
 	                    console.log(_this.localObj['delSuccess']);
 	                    _this.getList();
 	                    _this.setState({
 	                        show: false
 	                    });
+	                } else {
+	                    _this.props.callback('error', 'delete', _this.localObj['delSuccess'], res);
 	                }
 	            })['catch'](function (error) {
 	                _this.setState({
 	                    show: false
 	                });
-	                _acTips2['default'].create({
-	                    type: 'error',
-	                    content: _this.localObj['delError']
-	                });
+	                _this.props.callback('error', 'delete', _this.localObj['delSuccess'], error);
 	                console.error(error);
 	            });
 	        };
@@ -38279,12 +38271,13 @@
 	            }).then(function (res) {
 	                if (res.status == 200) {
 	                    window.open(res.data.filePath);
+	                    _this.props.callback('success', 'download', _this.localObj['downloadSuccess']);
+	                    console.log(_this.localObj['downloadSuccess']);
+	                } else {
+	                    _this.props.callback('error', 'download', _this.localObj['downloadError'], res);
 	                }
 	            })['catch'](function (error) {
-	                _acTips2['default'].create({
-	                    type: 'error',
-	                    content: _this.localObj['interfaceError']
-	                });
+	                _this.props.callback('error', 'download', _this.localObj['interfaceError'], error);
 	                console.error(error);
 	            });
 	        };
@@ -38303,11 +38296,13 @@
 	                _this.setState({
 	                    data: data
 	                });
-	                console.log('upload Success');
+	                _this.props.callback('success', 'upload', _this.localObj['uploadSuccess']);
+	                console.log(_this.localObj['uploadSuccess']);
 	            }
 	            if (info.file.status === 'removed') {
 	                var msg = info.file.response.displayMessage[(0, _utils.getCookie)(_this.props.localeCookie)] || info.file.response.displayMessage['zh_CN'];
-	                console.error(info.file.name + ' file upload failed.');
+	                console.error(info.file.name + ' ' + _this.localObj['uploadError']);
+	                _this.props.callback('error', 'upload', _this.localObj['uploadError'], info.file.response);
 	                data.forEach(function (item) {
 	                    if (item.uid == info.file.uid) {
 	                        item.uploadStatus = 'error';
@@ -38447,7 +38442,10 @@
 	                                    node: _react2['default'].createElement(
 	                                        _beeUpload2['default'],
 	                                        uploadP,
-	                                        _react2['default'].createElement(_acBtns2['default'], { localeCookie: _this.props.localeCookie, powerBtns: _this.props.powerBtns, type: 'line', btns: { reupload: {} } })
+	                                        _react2['default'].createElement(_acBtns2['default'], { localeCookie: _this.props.localeCookie,
+	                                            powerBtns: _this.props.powerBtns,
+	                                            type: 'line',
+	                                            btns: { reupload: {} } })
 	                                    )
 	                                },
 	                                'delete': {
@@ -95065,7 +95063,12 @@
 	        createrTime: '上传时间',
 	        operation: '操作',
 	        uploading: '正在上传',
+	        uploadSuccess: '文件上传成功',
 	        uploadError: '文件上传错误',
+	        listSuccess: '获得文件列表成功',
+	        listError: '获得文件列表失败',
+	        downloadSuccess: '获得文件信息成功',
+	        downloadError: '获得文件信息失败',
 	        'delete': '删除',
 	        delSuccess: '删除成功',
 	        delError: '删除失败',
@@ -95081,7 +95084,12 @@
 	        createrTime: '上傳時間',
 	        operation: '操作',
 	        uploading: '正在上傳',
+	        uploadSuccess: '文件上傳成功',
 	        uploadError: '文件上傳錯誤',
+	        listSuccess: '獲得文件列表成功',
+	        listError: '獲得文件列表失敗',
+	        downloadSuccess: '獲得文件信息成功',
+	        downloadError: '獲得文件信息失敗',
 	        'delete': '刪除',
 	        delSuccess: '刪除成功',
 	        delError: '刪除失敗',
@@ -95097,7 +95105,12 @@
 	        createrTime: 'Creater Time',
 	        operation: 'Operation',
 	        uploading: 'uploading',
+	        uploadSuccess: 'File uploaded successfully',
 	        uploadError: 'File upload error',
+	        listSuccess: 'Get file list successful',
+	        listError: 'Failed to get file list',
+	        downloadSuccess: 'File information obtained successfully',
+	        downloadError: 'Failed to get file information',
 	        'delete': 'delete',
 	        delSuccess: 'Delete successful',
 	        delError: 'Delete failed',
@@ -95105,487 +95118,6 @@
 	        interfaceError: 'Interface error'
 	    }
 	};
-	module.exports = exports['default'];
-
-/***/ }),
-/* 659 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _AcTips = __webpack_require__(660);
-	
-	var _AcTips2 = _interopRequireDefault(_AcTips);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-	
-	exports["default"] = _AcTips2["default"];
-	module.exports = exports['default'];
-
-/***/ }),
-/* 660 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-	
-	var _react = __webpack_require__(78);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _reactDom = __webpack_require__(79);
-	
-	var _reactDom2 = _interopRequireDefault(_reactDom);
-	
-	var _uuid = __webpack_require__(661);
-	
-	var _uuid2 = _interopRequireDefault(_uuid);
-	
-	var _Tips = __webpack_require__(666);
-	
-	var _Tips2 = _interopRequireDefault(_Tips);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-	
-	var AcTips = {
-	    toastList: [],
-	    top: 50,
-	    hide: function hide() {},
-	    destory: function destory(id) {
-	        var index = AcTips.toastList.indexOf(id);
-	        var toast = document.getElementById(id);
-	        if (toast) {
-	            toast.style.right = 0;
-	            _reactDom2["default"].unmountComponentAtNode(toast);
-	            document.body.removeChild(toast);
-	            AcTips.toastList.splice(index, 1);
-	            for (var i = index; i < AcTips.toastList.length; i++) {
-	                var item = document.getElementById(AcTips.toastList[i]);
-	                item.style.top = i * 50 + AcTips.top + 'px';
-	            }
-	        }
-	    },
-	    create: function create(options) {
-	        var _options$type = options.type,
-	            type = _options$type === undefined ? 'success' : _options$type,
-	            _options$top = options.top,
-	            top = _options$top === undefined ? 50 : _options$top,
-	            zIndex = options.zIndex;
-	
-	        AcTips.top = top;
-	        var id = (0, _uuid2["default"])();
-	        AcTips.toastList.push(id);
-	        var toast = document.createElement('div');
-	        toast.className = 'ac-tips-out ' + type;
-	        toast.id = id;
-	        toast.style.top = AcTips.toastList.length * 50 + top + 'px';
-	        if (zIndex) toast.style['z-index'] = zIndex;
-	        document.body.appendChild(toast);
-	        _reactDom2["default"].render(_react2["default"].createElement(_Tips2["default"], _extends({}, options, { destory: AcTips.destory, id: id })), toast);
-	        setTimeout(function () {
-	            toast.style.right = '5px';
-	        }, 0);
-	    },
-	    destoryAll: function destoryAll() {
-	        AcTips.toastList.forEach(function (id) {
-	            var toast = document.getElementById(id);
-	            toast.style.right = 0;
-	            _reactDom2["default"].unmountComponentAtNode(toast);
-	            document.body.removeChild(toast);
-	        });
-	        AcTips.toastList = [];
-	    }
-	};
-	
-	exports["default"] = AcTips;
-	module.exports = exports['default'];
-
-/***/ }),
-/* 661 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	var v1 = __webpack_require__(662);
-	var v4 = __webpack_require__(665);
-	
-	var uuid = v4;
-	uuid.v1 = v1;
-	uuid.v4 = v4;
-	
-	module.exports = uuid;
-
-
-/***/ }),
-/* 662 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	var rng = __webpack_require__(663);
-	var bytesToUuid = __webpack_require__(664);
-	
-	// **`v1()` - Generate time-based UUID**
-	//
-	// Inspired by https://github.com/LiosK/UUID.js
-	// and http://docs.python.org/library/uuid.html
-	
-	var _nodeId;
-	var _clockseq;
-	
-	// Previous uuid creation time
-	var _lastMSecs = 0;
-	var _lastNSecs = 0;
-	
-	// See https://github.com/broofa/node-uuid for API details
-	function v1(options, buf, offset) {
-	  var i = buf && offset || 0;
-	  var b = buf || [];
-	
-	  options = options || {};
-	  var node = options.node || _nodeId;
-	  var clockseq = options.clockseq !== undefined ? options.clockseq : _clockseq;
-	
-	  // node and clockseq need to be initialized to random values if they're not
-	  // specified.  We do this lazily to minimize issues related to insufficient
-	  // system entropy.  See #189
-	  if (node == null || clockseq == null) {
-	    var seedBytes = rng();
-	    if (node == null) {
-	      // Per 4.5, create and 48-bit node id, (47 random bits + multicast bit = 1)
-	      node = _nodeId = [
-	        seedBytes[0] | 0x01,
-	        seedBytes[1], seedBytes[2], seedBytes[3], seedBytes[4], seedBytes[5]
-	      ];
-	    }
-	    if (clockseq == null) {
-	      // Per 4.2.2, randomize (14 bit) clockseq
-	      clockseq = _clockseq = (seedBytes[6] << 8 | seedBytes[7]) & 0x3fff;
-	    }
-	  }
-	
-	  // UUID timestamps are 100 nano-second units since the Gregorian epoch,
-	  // (1582-10-15 00:00).  JSNumbers aren't precise enough for this, so
-	  // time is handled internally as 'msecs' (integer milliseconds) and 'nsecs'
-	  // (100-nanoseconds offset from msecs) since unix epoch, 1970-01-01 00:00.
-	  var msecs = options.msecs !== undefined ? options.msecs : new Date().getTime();
-	
-	  // Per 4.2.1.2, use count of uuid's generated during the current clock
-	  // cycle to simulate higher resolution clock
-	  var nsecs = options.nsecs !== undefined ? options.nsecs : _lastNSecs + 1;
-	
-	  // Time since last uuid creation (in msecs)
-	  var dt = (msecs - _lastMSecs) + (nsecs - _lastNSecs)/10000;
-	
-	  // Per 4.2.1.2, Bump clockseq on clock regression
-	  if (dt < 0 && options.clockseq === undefined) {
-	    clockseq = clockseq + 1 & 0x3fff;
-	  }
-	
-	  // Reset nsecs if clock regresses (new clockseq) or we've moved onto a new
-	  // time interval
-	  if ((dt < 0 || msecs > _lastMSecs) && options.nsecs === undefined) {
-	    nsecs = 0;
-	  }
-	
-	  // Per 4.2.1.2 Throw error if too many uuids are requested
-	  if (nsecs >= 10000) {
-	    throw new Error('uuid.v1(): Can\'t create more than 10M uuids/sec');
-	  }
-	
-	  _lastMSecs = msecs;
-	  _lastNSecs = nsecs;
-	  _clockseq = clockseq;
-	
-	  // Per 4.1.4 - Convert from unix epoch to Gregorian epoch
-	  msecs += 12219292800000;
-	
-	  // `time_low`
-	  var tl = ((msecs & 0xfffffff) * 10000 + nsecs) % 0x100000000;
-	  b[i++] = tl >>> 24 & 0xff;
-	  b[i++] = tl >>> 16 & 0xff;
-	  b[i++] = tl >>> 8 & 0xff;
-	  b[i++] = tl & 0xff;
-	
-	  // `time_mid`
-	  var tmh = (msecs / 0x100000000 * 10000) & 0xfffffff;
-	  b[i++] = tmh >>> 8 & 0xff;
-	  b[i++] = tmh & 0xff;
-	
-	  // `time_high_and_version`
-	  b[i++] = tmh >>> 24 & 0xf | 0x10; // include version
-	  b[i++] = tmh >>> 16 & 0xff;
-	
-	  // `clock_seq_hi_and_reserved` (Per 4.2.2 - include variant)
-	  b[i++] = clockseq >>> 8 | 0x80;
-	
-	  // `clock_seq_low`
-	  b[i++] = clockseq & 0xff;
-	
-	  // `node`
-	  for (var n = 0; n < 6; ++n) {
-	    b[i + n] = node[n];
-	  }
-	
-	  return buf ? buf : bytesToUuid(b);
-	}
-	
-	module.exports = v1;
-
-
-/***/ }),
-/* 663 */
-/***/ (function(module, exports) {
-
-	// Unique ID creation requires a high quality random # generator.  In the
-	// browser this is a little complicated due to unknown quality of Math.random()
-	// and inconsistent support for the `crypto` API.  We do the best we can via
-	// feature-detection
-	
-	// getRandomValues needs to be invoked in a context where "this" is a Crypto
-	// implementation. Also, find the complete implementation of crypto on IE11.
-	var getRandomValues = (typeof(crypto) != 'undefined' && crypto.getRandomValues && crypto.getRandomValues.bind(crypto)) ||
-	                      (typeof(msCrypto) != 'undefined' && typeof window.msCrypto.getRandomValues == 'function' && msCrypto.getRandomValues.bind(msCrypto));
-	
-	if (getRandomValues) {
-	  // WHATWG crypto RNG - http://wiki.whatwg.org/wiki/Crypto
-	  var rnds8 = new Uint8Array(16); // eslint-disable-line no-undef
-	
-	  module.exports = function whatwgRNG() {
-	    getRandomValues(rnds8);
-	    return rnds8;
-	  };
-	} else {
-	  // Math.random()-based (RNG)
-	  //
-	  // If all else fails, use Math.random().  It's fast, but is of unspecified
-	  // quality.
-	  var rnds = new Array(16);
-	
-	  module.exports = function mathRNG() {
-	    for (var i = 0, r; i < 16; i++) {
-	      if ((i & 0x03) === 0) r = Math.random() * 0x100000000;
-	      rnds[i] = r >>> ((i & 0x03) << 3) & 0xff;
-	    }
-	
-	    return rnds;
-	  };
-	}
-
-
-/***/ }),
-/* 664 */
-/***/ (function(module, exports) {
-
-	/**
-	 * Convert array of 16 byte values to UUID string format of the form:
-	 * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
-	 */
-	var byteToHex = [];
-	for (var i = 0; i < 256; ++i) {
-	  byteToHex[i] = (i + 0x100).toString(16).substr(1);
-	}
-	
-	function bytesToUuid(buf, offset) {
-	  var i = offset || 0;
-	  var bth = byteToHex;
-	  // join used to fix memory issue caused by concatenation: https://bugs.chromium.org/p/v8/issues/detail?id=3175#c4
-	  return ([bth[buf[i++]], bth[buf[i++]], 
-		bth[buf[i++]], bth[buf[i++]], '-',
-		bth[buf[i++]], bth[buf[i++]], '-',
-		bth[buf[i++]], bth[buf[i++]], '-',
-		bth[buf[i++]], bth[buf[i++]], '-',
-		bth[buf[i++]], bth[buf[i++]],
-		bth[buf[i++]], bth[buf[i++]],
-		bth[buf[i++]], bth[buf[i++]]]).join('');
-	}
-	
-	module.exports = bytesToUuid;
-
-
-/***/ }),
-/* 665 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	var rng = __webpack_require__(663);
-	var bytesToUuid = __webpack_require__(664);
-	
-	function v4(options, buf, offset) {
-	  var i = buf && offset || 0;
-	
-	  if (typeof(options) == 'string') {
-	    buf = options === 'binary' ? new Array(16) : null;
-	    options = null;
-	  }
-	  options = options || {};
-	
-	  var rnds = options.random || (options.rng || rng)();
-	
-	  // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
-	  rnds[6] = (rnds[6] & 0x0f) | 0x40;
-	  rnds[8] = (rnds[8] & 0x3f) | 0x80;
-	
-	  // Copy bytes to buffer, if provided
-	  if (buf) {
-	    for (var ii = 0; ii < 16; ++ii) {
-	      buf[i + ii] = rnds[ii];
-	    }
-	  }
-	
-	  return buf || bytesToUuid(rnds);
-	}
-	
-	module.exports = v4;
-
-
-/***/ }),
-/* 666 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	var _react = __webpack_require__(78);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _propTypes = __webpack_require__(83);
-	
-	var _propTypes2 = _interopRequireDefault(_propTypes);
-	
-	var _beeIcon = __webpack_require__(144);
-	
-	var _beeIcon2 = _interopRequireDefault(_beeIcon);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-	
-	function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
-	
-	var propTypes = {
-	    clsfix: _propTypes2["default"].string,
-	    content: _propTypes2["default"].node,
-	    duration: _propTypes2["default"].number,
-	    type: _propTypes2["default"].oneOfType[('success', 'error', 'warning')]
-	};
-	var defaultProps = {
-	    clsfix: 'ac-tips',
-	    content: '',
-	    type: 'success',
-	    duration: 5000
-	};
-	
-	var Tips = function (_Component) {
-	    _inherits(Tips, _Component);
-	
-	    function Tips(props) {
-	        _classCallCheck(this, Tips);
-	
-	        var _this = _possibleConstructorReturn(this, _Component.call(this, props));
-	
-	        _this.hide = function () {
-	            _this.setState({
-	                hide: true
-	            });
-	        };
-	
-	        _this.onMouseEnter = function () {
-	            if (!_this.state.hide) return;
-	            _this.setState({
-	                hide: false
-	            });
-	            _this.timer && clearTimeout(_this.timer);
-	            _this.timer = setTimeout(function () {
-	                _this.timer = setTimeout(function () {
-	                    _this.hide();
-	                }, _this.props.duration);
-	            });
-	        };
-	
-	        _this.state = {
-	            hide: false
-	        };
-	        return _this;
-	    }
-	
-	    Tips.prototype.componentDidMount = function componentDidMount() {
-	        var _this2 = this;
-	
-	        var _props = this.props,
-	            duration = _props.duration,
-	            destory = _props.destory,
-	            type = _props.type,
-	            id = _props.id;
-	
-	        if (duration) {
-	            this.timer && clearTimeout(this.timer);
-	            if (type == 'success' || type == 'warning') {
-	                this.timer = setTimeout(function () {
-	                    destory(id);
-	                }, duration);
-	            } else {
-	                this.timer = setTimeout(function () {
-	                    _this2.hide();
-	                }, duration);
-	            }
-	        }
-	    };
-	
-	    Tips.prototype.render = function render() {
-	        var IconTypes = {
-	            warning: 'uf-exc-c',
-	            error: 'uf-close-c',
-	            success: 'uf-correct'
-	        };
-	        var _props2 = this.props,
-	            clsfix = _props2.clsfix,
-	            content = _props2.content,
-	            type = _props2.type,
-	            destory = _props2.destory,
-	            id = _props2.id;
-	        var hide = this.state.hide;
-	
-	        return _react2["default"].createElement(
-	            'div',
-	            { className: clsfix + ' ' + type, onMouseEnter: this.onMouseEnter },
-	            _react2["default"].createElement(_beeIcon2["default"], { type: IconTypes[type] }),
-	            hide ? '' : _react2["default"].createElement(
-	                'span',
-	                { className: clsfix + '-inner' },
-	                content
-	            ),
-	            hide ? '' : _react2["default"].createElement(
-	                'span',
-	                { className: clsfix + '-close', onClick: function onClick() {
-	                        destory(id);
-	                    } },
-	                '\u5173\u95ED'
-	            )
-	        );
-	    };
-	
-	    return Tips;
-	}(_react.Component);
-	
-	;
-	
-	Tips.propTypes = propTypes;
-	Tips.defaultProps = defaultProps;
-	
-	exports["default"] = Tips;
 	module.exports = exports['default'];
 
 /***/ })

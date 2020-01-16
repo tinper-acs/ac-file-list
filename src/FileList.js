@@ -10,8 +10,6 @@ import cloneDeep from 'clone-deep';
 import request from 'axios';
 import { getSize, getFileNames,dateFormate,getCookie } from './utils.js';
 import i18n from './i18n.js';
-import AcTips from 'ac-tips';
-
 
 const propTypes = {
     id:PropTypes.string.isRequired,
@@ -21,6 +19,7 @@ const propTypes = {
     url:PropTypes.object,//地址
     uploadProps:PropTypes.object,//附件上传参数
     powerBtns:PropTypes.array,//可用按钮集合
+    callback:PropTypes.func,//回调 第一个参数：成功(success)/失败(error)； 第二个参数：list 获得文件列表；delete 删除； upload 上传。 第三个参数：成功信息/错误信息。 第四个参数：null/error对象
 };
 
 const defaultProps = {
@@ -37,6 +36,7 @@ const defaultProps = {
     uploadProps:{},
     powerBtns:['upload','reupload','download','delete','confirm','cancel'],
     localeCookie:'locale',
+    callback:()=>{}
 };
 
 class FileList extends Component {
@@ -131,7 +131,10 @@ class FileList extends Component {
                             btns={{
                                 reupload: {
                                     node:<Upload {...uploadP}>
-                                            <Btns localeCookie={this.props.localeCookie} powerBtns={this.props.powerBtns} type='line' btns={{ reupload:{} }}/>
+                                            <Btns localeCookie={this.props.localeCookie} 
+                                                powerBtns={this.props.powerBtns} 
+                                                type='line' 
+                                                btns={{ reupload:{} }}/>
                                         </Upload>
                                 },
                                 delete: {
@@ -203,17 +206,12 @@ class FileList extends Component {
                             pageNo:params.pageNo
                         })
                     }
+                    this.props.callback('success','list',this.localObj['listSuccess']);
                 }else{
-                    AcTips.create({
-                        type:'error',
-                        content:this.localObj['interfaceError']
-                    })
+                    this.props.callback('error','list',this.localObj['listError'],res);
                 }
             }).catch(error=>{
-                AcTips.create({
-                    type:'error',
-                    content:this.localObj['interfaceError']
-                })
+                this.props.callback('error','list',this.localObj['interfaceError'],error);
                 console.error(error)
             })
         }
@@ -336,24 +334,20 @@ class FileList extends Component {
             withCredentials:true
         }).then((res)=>{
             if(res.status==200){
-                AcTips.create({
-                    type:'success',
-                    content:this.localObj['delSuccess']
-                })
+                this.props.callback('success','delete',this.localObj['delSuccess']);
                 console.log(this.localObj['delSuccess']);
                 this.getList()
                 this.setState({
                     show:false
                 })
+            }else{
+                this.props.callback('error','delete',this.localObj['delSuccess'],res);
             }
         }).catch(error=>{
             this.setState({
                 show:false
             })
-            AcTips.create({
-                type:'error',
-                content:this.localObj['delError']
-            })
+            this.props.callback('error','delete',this.localObj['delSuccess'],error);
             console.error(error);
         })
     }
@@ -365,12 +359,13 @@ class FileList extends Component {
         }).then((res)=>{
             if(res.status==200){
                 window.open(res.data.filePath)
+                this.props.callback('success','download',this.localObj['downloadSuccess']);
+                console.log(this.localObj['downloadSuccess']);
+            }else{
+                this.props.callback('error','download',this.localObj['downloadError'],res);
             }
         }).catch(error=>{
-            AcTips.create({
-                type:'error',
-                content:this.localObj['interfaceError']
-            })
+            this.props.callback('error','download',this.localObj['interfaceError'],error);
             console.error(error)
         })
     }
@@ -403,11 +398,13 @@ class FileList extends Component {
             this.setState({
                 data
             })
-            console.log('upload Success')
+            this.props.callback('success','upload',this.localObj['uploadSuccess']);
+            console.log(this.localObj['uploadSuccess'])
         }  
         if (info.file.status === 'removed') {
             let msg = info.file.response.displayMessage[getCookie(this.props.localeCookie)]||info.file.response.displayMessage['zh_CN']
-            console.error(`${info.file.name} file upload failed.`);
+            console.error(`${info.file.name} ${this.localObj['uploadError']}`);
+            this.props.callback('error','upload',this.localObj['uploadError'],info.file.response);
             data.forEach(item=>{
                 if(item.uid==info.file.uid){
                     item.uploadStatus='error';
