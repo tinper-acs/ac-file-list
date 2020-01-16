@@ -9,7 +9,8 @@ import Btns from 'ac-btns';
 import cloneDeep from 'clone-deep';
 import request from 'axios';
 import { getSize, getFileNames,dateFormate,getCookie } from './utils.js';
-import i18n from './i18n.js'
+import i18n from './i18n.js';
+import AcTips from 'ac-tips';
 
 
 const propTypes = {
@@ -203,10 +204,16 @@ class FileList extends Component {
                         })
                     }
                 }else{
-                    console.error(this.localObj['interfaceError'])
+                    AcTips.create({
+                        type:'error',
+                        content:this.localObj['interfaceError']
+                    })
                 }
             }).catch(error=>{
-                console.error(this.localObj['interfaceError'])
+                AcTips.create({
+                    type:'error',
+                    content:this.localObj['interfaceError']
+                })
                 console.error(error)
             })
         }
@@ -329,6 +336,10 @@ class FileList extends Component {
             withCredentials:true
         }).then((res)=>{
             if(res.status==200){
+                AcTips.create({
+                    type:'success',
+                    content:this.localObj['delSuccess']
+                })
                 console.log(this.localObj['delSuccess']);
                 this.getList()
                 this.setState({
@@ -338,6 +349,10 @@ class FileList extends Component {
         }).catch(error=>{
             this.setState({
                 show:false
+            })
+            AcTips.create({
+                type:'error',
+                content:this.localObj['delError']
             })
             console.error(error);
         })
@@ -352,6 +367,10 @@ class FileList extends Component {
                 window.open(res.data.filePath)
             }
         }).catch(error=>{
+            AcTips.create({
+                type:'error',
+                content:this.localObj['interfaceError']
+            })
             console.error(error)
         })
     }

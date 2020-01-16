@@ -16,6 +16,7 @@ exports["default"] = {
         uploadError: '文件上传错误',
         "delete": '删除',
         delSuccess: '删除成功',
+        delError: '删除失败',
         delSure: '确认要删除吗？',
         interfaceError: '接口错误'
     },
@@ -31,6 +32,7 @@ exports["default"] = {
         uploadError: '文件上傳錯誤',
         "delete": '刪除',
         delSuccess: '刪除成功',
+        delError: '刪除失敗',
         delSure: '確認要刪除嗎？',
         interfaceError: '接口錯誤'
     },
@@ -46,6 +48,7 @@ exports["default"] = {
         uploadError: 'File upload error',
         "delete": 'delete',
         delSuccess: 'Delete successful',
+        delError: 'Delete failed',
         delSure: 'Are you sure you want to delete?',
         interfaceError: 'Interface error'
     }

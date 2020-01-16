@@ -52,6 +52,10 @@ var _i18n = require('./i18n.js');
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
+var _acTips = require('ac-tips');
+
+var _acTips2 = _interopRequireDefault(_acTips);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
@@ -124,10 +128,16 @@ var FileList = function (_Component) {
                             });
                         }
                     } else {
-                        console.error(_this.localObj['interfaceError']);
+                        _acTips2["default"].create({
+                            type: 'error',
+                            content: _this.localObj['interfaceError']
+                        });
                     }
                 })["catch"](function (error) {
-                    console.error(_this.localObj['interfaceError']);
+                    _acTips2["default"].create({
+                        type: 'error',
+                        content: _this.localObj['interfaceError']
+                    });
                     console.error(error);
                 });
             }
@@ -256,6 +266,10 @@ var FileList = function (_Component) {
                 withCredentials: true
             }).then(function (res) {
                 if (res.status == 200) {
+                    _acTips2["default"].create({
+                        type: 'success',
+                        content: _this.localObj['delSuccess']
+                    });
                     console.log(_this.localObj['delSuccess']);
                     _this.getList();
                     _this.setState({
@@ -265,6 +279,10 @@ var FileList = function (_Component) {
             })["catch"](function (error) {
                 _this.setState({
                     show: false
+                });
+                _acTips2["default"].create({
+                    type: 'error',
+                    content: _this.localObj['delError']
                 });
                 console.error(error);
             });
@@ -280,6 +298,10 @@ var FileList = function (_Component) {
                     window.open(res.data.filePath);
                 }
             })["catch"](function (error) {
+                _acTips2["default"].create({
+                    type: 'error',
+                    content: _this.localObj['interfaceError']
+                });
                 console.error(error);
             });
         };
