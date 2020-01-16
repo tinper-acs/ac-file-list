@@ -1,3 +1,13 @@
+<a name="0.1.10"></a>
+## [0.1.10](https://github.com/tinper-bee/ac-file-list/compare/v0.1.9...v0.1.10) (2020-01-16)
+
+
+### Features
+
+* **ac-file-list:** 删除成功失败提示 ([bced6df](https://github.com/tinper-bee/ac-file-list/commit/bced6df))
+
+
+
 <a name="0.1.9"></a>
 ## [0.1.9](https://github.com/tinper-bee/ac-file-list/compare/v0.1.8...v0.1.9) (2020-01-15)
 
