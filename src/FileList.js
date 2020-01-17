@@ -341,13 +341,13 @@ class FileList extends Component {
                     show:false
                 })
             }else{
-                this.props.callback('error','delete',this.localObj['delSuccess'],res);
+                this.props.callback('error','delete',this.localObj['delError'],res);
             }
         }).catch(error=>{
             this.setState({
                 show:false
             })
-            this.props.callback('error','delete',this.localObj['delSuccess'],error);
+            this.props.callback('error','delete',this.localObj['delError'],error);
             console.error(error);
         })
     }

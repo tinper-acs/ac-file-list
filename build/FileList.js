@@ -266,13 +266,13 @@ var FileList = function (_Component) {
                         show: false
                     });
                 } else {
-                    _this.props.callback('error', 'delete', _this.localObj['delSuccess'], res);
+                    _this.props.callback('error', 'delete', _this.localObj['delError'], res);
                 }
             })["catch"](function (error) {
                 _this.setState({
                     show: false
                 });
-                _this.props.callback('error', 'delete', _this.localObj['delSuccess'], error);
+                _this.props.callback('error', 'delete', _this.localObj['delError'], error);
                 console.error(error);
             });
         };
