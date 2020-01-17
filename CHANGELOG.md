@@ -1,3 +1,13 @@
+<a name="0.2.1"></a>
+## [0.2.1](https://github.com/tinper-bee/ac-file-list/compare/v0.2.0...v0.2.1) (2020-01-17)
+
+
+### Bug Fixes
+
+* **ac-file-list:** delError ([a6abdcb](https://github.com/tinper-bee/ac-file-list/commit/a6abdcb))
+
+
+
 <a name="0.2.0"></a>
 # [0.2.0](https://github.com/tinper-bee/ac-file-list/compare/v0.1.10...v0.2.0) (2020-01-16)
 
