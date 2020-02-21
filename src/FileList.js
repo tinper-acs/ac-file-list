@@ -12,6 +12,7 @@ import { getSize, getFileNames,dateFormate,getCookie } from './utils.js';
 import i18n from './i18n.js';
 
 const propTypes = {
+    canUnfold:PropTypes.bool,//是否可以展开收起
     id:PropTypes.string.isRequired,
     clsfix:PropTypes.string,
     disabled:PropTypes.bool,
@@ -36,7 +37,8 @@ const defaultProps = {
     uploadProps:{},
     powerBtns:['upload','reupload','download','delete','confirm','cancel'],
     localeCookie:'locale',
-    callback:()=>{}
+    callback:()=>{},
+    canUnfold:true
 };
 
 class FileList extends Component {
@@ -441,7 +443,7 @@ class FileList extends Component {
     }
 
     render(){
-        let { clsfix,id,disabled,uploadProps } = this.props;
+        let { clsfix,id,disabled,uploadProps,canUnfold } = this.props;
         let { data,open } = this.state;
         const uploadP =Object.assign({
             withCredentials:true,
@@ -454,10 +456,12 @@ class FileList extends Component {
         return(
             <div className={clsfix}>
                 <div  className={open?`${clsfix}-header`:`${clsfix}-header close`}>
-                    <div className={`${clsfix}-text`} onClick={this.changeOpenStatus}>
-                        <Icon type={open?'uf-triangle-down':'uf-triangle-right'}></Icon>
-                        <span>{this.localObj.file}</span>
-                    </div>
+                    {
+                        canUnfold?<div className={`${clsfix}-text`} onClick={this.changeOpenStatus}>
+                            <Icon type={open?'uf-triangle-down':'uf-triangle-right'}></Icon>
+                            <span>{this.localObj.file}</span>
+                        </div>:''
+                    }
                     <div className={`${clsfix}-btns`}>
                         {
                             disabled?'':<Btns localeCookie={this.props.localeCookie}

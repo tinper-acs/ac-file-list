@@ -65,6 +65,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
 
 var propTypes = {
+    canUnfold: _propTypes2["default"].bool, //是否可以展开收起
     id: _propTypes2["default"].string.isRequired,
     clsfix: _propTypes2["default"].string,
     disabled: _propTypes2["default"].bool,
@@ -89,7 +90,8 @@ var defaultProps = {
     uploadProps: {},
     powerBtns: ['upload', 'reupload', 'download', 'delete', 'confirm', 'cancel'],
     localeCookie: 'locale',
-    callback: function callback() {}
+    callback: function callback() {},
+    canUnfold: true
 };
 
 var FileList = function (_Component) {
@@ -544,7 +546,8 @@ var FileList = function (_Component) {
             clsfix = _props.clsfix,
             id = _props.id,
             disabled = _props.disabled,
-            uploadProps = _props.uploadProps;
+            uploadProps = _props.uploadProps,
+            canUnfold = _props.canUnfold;
         var _state = this.state,
             data = _state.data,
             open = _state.open;
@@ -563,7 +566,7 @@ var FileList = function (_Component) {
             _react2["default"].createElement(
                 'div',
                 { className: open ? clsfix + '-header' : clsfix + '-header close' },
-                _react2["default"].createElement(
+                canUnfold ? _react2["default"].createElement(
                     'div',
                     { className: clsfix + '-text', onClick: this.changeOpenStatus },
                     _react2["default"].createElement(_beeIcon2["default"], { type: open ? 'uf-triangle-down' : 'uf-triangle-right' }),
@@ -572,7 +575,7 @@ var FileList = function (_Component) {
                         null,
                         this.localObj.file
                     )
-                ),
+                ) : '',
                 _react2["default"].createElement(
                     'div',
                     { className: clsfix + '-btns' },

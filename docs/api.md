@@ -26,6 +26,7 @@ import 'ac-file-list/build/FileList.css';
 |uploadProps|上传参数，参考 [bee-upload API](http://bee.tinper.org/tinper-bee/bee-upload)|object|{}|
 |powerBtns|可用按钮集合，有以下可选 upload(上传)、reupload(重新上传)、download(下载)、delete(删除)|['upload','reupload','download','delete','confirm','cancel']|
 |localeCookie|获取多语cookie的key值|string|locale|
+|canUnfold|是否支持展开收起|bool|true|
 |callback|回调，参数如下|func|-|
 
 ```
