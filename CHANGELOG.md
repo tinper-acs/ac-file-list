@@ -1,3 +1,13 @@
+<a name="0.2.3"></a>
+## [0.2.3](https://github.com/tinper-bee/ac-file-list/compare/v0.2.2...v0.2.3) (2020-02-26)
+
+
+### Features
+
+* **ac-file-list:** callback 参数修改 ([7edd1d9](https://github.com/tinper-bee/ac-file-list/commit/7edd1d9))
+
+
+
 <a name="0.2.2"></a>
 ## [0.2.2](https://github.com/tinper-bee/ac-file-list/compare/v0.2.1...v0.2.2) (2020-02-21)
 
