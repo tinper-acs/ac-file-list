@@ -208,12 +208,12 @@ class FileList extends Component {
                             pageNo:params.pageNo
                         })
                     }
-                    this.props.callback('success','list',this.localObj['listSuccess']);
+                    this.props.callback('success','list',res);
                 }else{
-                    this.props.callback('error','list',this.localObj['listError'],res);
+                    this.props.callback('error','list',res);
                 }
             }).catch(error=>{
-                this.props.callback('error','list',this.localObj['interfaceError'],error);
+                this.props.callback('error','list',error);
                 console.error(error)
             })
         }
@@ -336,20 +336,20 @@ class FileList extends Component {
             withCredentials:true
         }).then((res)=>{
             if(res.status==200){
-                this.props.callback('success','delete',this.localObj['delSuccess']);
+                this.props.callback('success','delete',res);
                 console.log(this.localObj['delSuccess']);
                 this.getList()
                 this.setState({
                     show:false
                 })
             }else{
-                this.props.callback('error','delete',this.localObj['delError'],res);
+                this.props.callback('error','delete',res);
             }
         }).catch(error=>{
             this.setState({
                 show:false
             })
-            this.props.callback('error','delete',this.localObj['delError'],error);
+            this.props.callback('error','delete',error);
             console.error(error);
         })
     }
@@ -361,13 +361,13 @@ class FileList extends Component {
         }).then((res)=>{
             if(res.status==200){
                 window.open(res.data.filePath)
-                this.props.callback('success','download',this.localObj['downloadSuccess']);
+                this.props.callback('success','download',res);
                 console.log(this.localObj['downloadSuccess']);
             }else{
-                this.props.callback('error','download',this.localObj['downloadError'],res);
+                this.props.callback('error','download',res);
             }
         }).catch(error=>{
-            this.props.callback('error','download',this.localObj['interfaceError'],error);
+            this.props.callback('error','download',error);
             console.error(error)
         })
     }
@@ -400,13 +400,13 @@ class FileList extends Component {
             this.setState({
                 data
             })
-            this.props.callback('success','upload',this.localObj['uploadSuccess']);
+            this.props.callback('success','upload',info.file.response);
             console.log(this.localObj['uploadSuccess'])
         }  
         if (info.file.status === 'removed') {
             let msg = info.file.response.displayMessage[getCookie(this.props.localeCookie)]||info.file.response.displayMessage['zh_CN']
             console.error(`${info.file.name} ${this.localObj['uploadError']}`);
-            this.props.callback('error','upload',this.localObj['uploadError'],info.file.response);
+            this.props.callback('error','upload',info.file.response);
             data.forEach(item=>{
                 if(item.uid==info.file.uid){
                     item.uploadStatus='error';

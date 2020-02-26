@@ -127,12 +127,12 @@ var FileList = function (_Component) {
                                 pageNo: params.pageNo
                             });
                         }
-                        _this.props.callback('success', 'list', _this.localObj['listSuccess']);
+                        _this.props.callback('success', 'list', res);
                     } else {
-                        _this.props.callback('error', 'list', _this.localObj['listError'], res);
+                        _this.props.callback('error', 'list', res);
                     }
                 })["catch"](function (error) {
-                    _this.props.callback('error', 'list', _this.localObj['interfaceError'], error);
+                    _this.props.callback('error', 'list', error);
                     console.error(error);
                 });
             }
@@ -261,20 +261,20 @@ var FileList = function (_Component) {
                 withCredentials: true
             }).then(function (res) {
                 if (res.status == 200) {
-                    _this.props.callback('success', 'delete', _this.localObj['delSuccess']);
+                    _this.props.callback('success', 'delete', res);
                     console.log(_this.localObj['delSuccess']);
                     _this.getList();
                     _this.setState({
                         show: false
                     });
                 } else {
-                    _this.props.callback('error', 'delete', _this.localObj['delError'], res);
+                    _this.props.callback('error', 'delete', res);
                 }
             })["catch"](function (error) {
                 _this.setState({
                     show: false
                 });
-                _this.props.callback('error', 'delete', _this.localObj['delError'], error);
+                _this.props.callback('error', 'delete', error);
                 console.error(error);
             });
         };
@@ -287,13 +287,13 @@ var FileList = function (_Component) {
             }).then(function (res) {
                 if (res.status == 200) {
                     window.open(res.data.filePath);
-                    _this.props.callback('success', 'download', _this.localObj['downloadSuccess']);
+                    _this.props.callback('success', 'download', res);
                     console.log(_this.localObj['downloadSuccess']);
                 } else {
-                    _this.props.callback('error', 'download', _this.localObj['downloadError'], res);
+                    _this.props.callback('error', 'download', res);
                 }
             })["catch"](function (error) {
-                _this.props.callback('error', 'download', _this.localObj['interfaceError'], error);
+                _this.props.callback('error', 'download', error);
                 console.error(error);
             });
         };
@@ -312,13 +312,13 @@ var FileList = function (_Component) {
                 _this.setState({
                     data: data
                 });
-                _this.props.callback('success', 'upload', _this.localObj['uploadSuccess']);
+                _this.props.callback('success', 'upload', info.file.response);
                 console.log(_this.localObj['uploadSuccess']);
             }
             if (info.file.status === 'removed') {
                 var msg = info.file.response.displayMessage[(0, _utils.getCookie)(_this.props.localeCookie)] || info.file.response.displayMessage['zh_CN'];
                 console.error(info.file.name + ' ' + _this.localObj['uploadError']);
-                _this.props.callback('error', 'upload', _this.localObj['uploadError'], info.file.response);
+                _this.props.callback('error', 'upload', info.file.response);
                 data.forEach(function (item) {
                     if (item.uid == info.file.uid) {
                         item.uploadStatus = 'error';

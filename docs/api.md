@@ -27,17 +27,16 @@ import 'ac-file-list/build/FileList.css';
 |powerBtns|可用按钮集合，有以下可选 upload(上传)、reupload(重新上传)、download(下载)、delete(删除)|['upload','reupload','download','delete','confirm','cancel']|
 |localeCookie|获取多语cookie的key值|string|locale|
 |canUnfold|是否支持展开收起|bool|true|
-|callback|回调，参数如下|func|-|
+|callback|成功和失败回调函数回调，参数如下|func|-|
 
 ```
-/**
+/** callback
  * 成功和失败回调函数
  * @param {string} result 成功/失败  success 成功；error 失败
  * @param {string} type 接口类型：list 获得文件列表；delete 删除；upload 上传；download 下载
- * @param {string} msg 成功/失败信息
- * @param {obj} error 失败错误对象。成功时没有
+ * @param {object} result 接口返回信息
  */
-function callback(result,type,msg,error){
+function callback(result,type,result){
 
 }
 
