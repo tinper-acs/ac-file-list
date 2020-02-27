@@ -36,7 +36,7 @@ import 'ac-file-list/build/FileList.css';
  * @param {string} type 接口类型：list 获得文件列表；delete 删除；upload 上传；download 下载
  * @param {object} result 接口返回信息
  */
-function callback(result,type,result){
+function callback(result,type,res){
 
 }
 
