@@ -188,60 +188,6 @@ var FileList = function (_Component) {
             });
         };
 
-        _this.hoverContent = function () {
-            var hoverData = _this.state.hoverData;
-            if (hoverData.uploadStatus == 'error') {
-                var uploadP = _extends({
-                    name: 'files',
-                    action: _this.props.url.upload.replace('{id}', _this.props.id),
-                    onChange: _this.fileChange,
-                    multiple: true,
-                    beforeUpload: _this.reUpload,
-                    withCredentials: true
-                }, _this.props.uploadProps);
-                return _react2["default"].createElement(
-                    'div',
-                    { className: 'opt-btns' },
-                    _react2["default"].createElement(_acBtns2["default"], { localeCookie: _this.props.localeCookie,
-                        powerBtns: _this.props.powerBtns,
-                        btns: {
-                            reupload: {
-                                node: _react2["default"].createElement(
-                                    _beeUpload2["default"],
-                                    uploadP,
-                                    _react2["default"].createElement(_acBtns2["default"], { localeCookie: _this.props.localeCookie, type: 'line', powerBtns: _this.props.powerBtns, btns: { reupload: {} } })
-                                )
-                            },
-                            "delete": {
-                                onClick: function onClick() {
-                                    _this.deleteError(hoverData.uid);
-                                }
-                            }
-                        }
-                    })
-                );
-            } else if (hoverData.uploadStatus == 'uploading') {
-                return _react2["default"].createElement('div', { className: 'opt-btns' });
-            } else {
-                return _react2["default"].createElement(
-                    'div',
-                    { className: 'opt-btns' },
-                    _react2["default"].createElement(_acBtns2["default"], { localeCookie: _this.props.localeCookie,
-                        powerBtns: _this.props.powerBtns,
-                        type: 'line',
-                        btns: {
-                            download: {
-                                onClick: _this.download
-                            },
-                            "delete": {
-                                onClick: _this.deleteConfirm
-                            }
-                        }
-                    })
-                );
-            }
-        };
-
         _this.deleteConfirm = function () {
             _this.setState({
                 show: true
@@ -438,59 +384,61 @@ var FileList = function (_Component) {
             key: "e",
             width: 200,
             render: function render(text, record, index) {
-                if (record.uploadStatus == 'error') {
-                    var uploadP = _extends({
-                        name: 'files',
-                        action: _this.props.url.upload.replace('{id}', _this.props.id),
-                        onChange: _this.fileChange,
-                        multiple: true,
-                        beforeUpload: _this.reUpload,
-                        withCredentials: true
-                    }, _this.props.uploadProps);
-                    return _react2["default"].createElement(
-                        'div',
-                        { className: 'opt-btns' },
-                        _react2["default"].createElement(_acBtns2["default"], _defineProperty({ localeCookie: _this.props.localeCookie,
-                            powerBtns: _this.props.powerBtns,
-                            type: 'line',
-                            btns: {
-                                reupload: {
-                                    node: _react2["default"].createElement(
-                                        _beeUpload2["default"],
-                                        uploadP,
-                                        _react2["default"].createElement(_acBtns2["default"], { localeCookie: _this.props.localeCookie,
-                                            powerBtns: _this.props.powerBtns,
-                                            type: 'line',
-                                            btns: { reupload: {} } })
-                                    )
-                                },
-                                "delete": {
-                                    onClick: function onClick() {
-                                        _this.deleteError(record.uid);
+                if (!_this.props.disabled) {
+                    if (record.uploadStatus == 'error') {
+                        var uploadP = _extends({
+                            name: 'files',
+                            action: _this.props.url.upload.replace('{id}', _this.props.id),
+                            onChange: _this.fileChange,
+                            multiple: true,
+                            beforeUpload: _this.reUpload,
+                            withCredentials: true
+                        }, _this.props.uploadProps);
+                        return _react2["default"].createElement(
+                            'div',
+                            { className: 'opt-btns' },
+                            _react2["default"].createElement(_acBtns2["default"], _defineProperty({ localeCookie: _this.props.localeCookie,
+                                powerBtns: _this.props.powerBtns,
+                                type: 'line',
+                                btns: {
+                                    reupload: {
+                                        node: _react2["default"].createElement(
+                                            _beeUpload2["default"],
+                                            uploadP,
+                                            _react2["default"].createElement(_acBtns2["default"], { localeCookie: _this.props.localeCookie,
+                                                powerBtns: _this.props.powerBtns,
+                                                type: 'line',
+                                                btns: { reupload: {} } })
+                                        )
+                                    },
+                                    "delete": {
+                                        onClick: function onClick() {
+                                            _this.deleteError(record.uid);
+                                        }
                                     }
                                 }
-                            }
-                        }, 'powerBtns', props.powerBtns))
-                    );
-                } else if (record.uploadStatus == 'uploading') {
-                    return _react2["default"].createElement('div', { className: 'opt-btns' });
-                } else {
-                    return _react2["default"].createElement(
-                        'div',
-                        { className: 'opt-btns' },
-                        _react2["default"].createElement(_acBtns2["default"], { localeCookie: props.localeCookie,
-                            type: 'line',
-                            btns: {
-                                download: {
-                                    onClick: _this.download
+                            }, 'powerBtns', props.powerBtns))
+                        );
+                    } else if (record.uploadStatus == 'uploading') {
+                        return _react2["default"].createElement('div', { className: 'opt-btns' });
+                    } else {
+                        return _react2["default"].createElement(
+                            'div',
+                            { className: 'opt-btns' },
+                            _react2["default"].createElement(_acBtns2["default"], { localeCookie: props.localeCookie,
+                                type: 'line',
+                                btns: {
+                                    download: {
+                                        onClick: _this.download
+                                    },
+                                    "delete": {
+                                        onClick: _this.deleteConfirm
+                                    }
                                 },
-                                "delete": {
-                                    onClick: _this.deleteConfirm
-                                }
-                            },
-                            powerBtns: props.powerBtns
-                        })
-                    );
+                                powerBtns: props.powerBtns
+                            })
+                        );
+                    }
                 }
             }
         }];
@@ -521,9 +469,6 @@ var FileList = function (_Component) {
     /**划过 */
 
     /**删除上传失败的文件 */
-
-
-    /**下载删除按钮 */
 
 
     /**删除 */

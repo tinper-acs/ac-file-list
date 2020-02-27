@@ -117,53 +117,56 @@ class FileList extends Component {
             key: "e",
             width: 200,
             render:(text,record,index)=>{
-                if(record.uploadStatus=='error'){
-                    const uploadP = Object.assign({
-                        name: 'files',
-                        action:this.props.url.upload.replace('{id}',this.props.id),
-                        onChange:this.fileChange,
-                        multiple:true,
-                        beforeUpload:this.reUpload,
-                        withCredentials:true
-                    },this.props.uploadProps);
-                    return <div className="opt-btns">
-                        <Btns localeCookie={this.props.localeCookie}
-                            powerBtns={this.props.powerBtns}
-                            type='line'
-                            btns={{
-                                reupload: {
-                                    node:<Upload {...uploadP}>
-                                            <Btns localeCookie={this.props.localeCookie} 
-                                                powerBtns={this.props.powerBtns} 
-                                                type='line' 
-                                                btns={{ reupload:{} }}/>
-                                        </Upload>
-                                },
-                                delete: {
-                                    onClick: ()=>{this.deleteError(record.uid)}
-                                },
-                            }}
-                            powerBtns={props.powerBtns}
-                        />
-                    </div>
-                }else if(record.uploadStatus=='uploading'){
-                    return <div className="opt-btns"></div>
-                }else{
-                    return <div className="opt-btns">
-                        <Btns localeCookie={props.localeCookie}
-                            type='line'
-                            btns={{
-                                download: {
-                                    onClick: this.download
-                                },
-                                delete: {
-                                    onClick: this.deleteConfirm
-                                },
-                            }}
-                            powerBtns={props.powerBtns}
-                        />
-                    </div>
+                if(!this.props.disabled){
+                    if(record.uploadStatus=='error'){
+                        const uploadP = Object.assign({
+                            name: 'files',
+                            action:this.props.url.upload.replace('{id}',this.props.id),
+                            onChange:this.fileChange,
+                            multiple:true,
+                            beforeUpload:this.reUpload,
+                            withCredentials:true
+                        },this.props.uploadProps);
+                        return <div className="opt-btns">
+                            <Btns localeCookie={this.props.localeCookie}
+                                powerBtns={this.props.powerBtns}
+                                type='line'
+                                btns={{
+                                    reupload: {
+                                        node:<Upload {...uploadP}>
+                                                <Btns localeCookie={this.props.localeCookie} 
+                                                    powerBtns={this.props.powerBtns} 
+                                                    type='line' 
+                                                    btns={{ reupload:{} }}/>
+                                            </Upload>
+                                    },
+                                    delete: {
+                                        onClick: ()=>{this.deleteError(record.uid)}
+                                    },
+                                }}
+                                powerBtns={props.powerBtns}
+                            />
+                        </div>
+                    }else if(record.uploadStatus=='uploading'){
+                        return <div className="opt-btns"></div>
+                    }else{
+                        return <div className="opt-btns">
+                            <Btns localeCookie={props.localeCookie}
+                                type='line'
+                                btns={{
+                                    download: {
+                                        onClick: this.download
+                                    },
+                                    delete: {
+                                        onClick: this.deleteConfirm
+                                    },
+                                }}
+                                powerBtns={props.powerBtns}
+                            />
+                        </div>
+                    }
                 }
+                
             }
         }];
     }
@@ -269,54 +272,7 @@ class FileList extends Component {
         })
     }
 
-    /**下载删除按钮 */
-    hoverContent=()=>{
-        let hoverData = this.state.hoverData;
-        if(hoverData.uploadStatus=='error'){
-            const uploadP = Object.assign({
-                name: 'files',
-                action: this.props.url.upload.replace('{id}',this.props.id),
-                onChange:this.fileChange,
-                multiple:true,
-                beforeUpload:this.reUpload,
-                withCredentials:true
-            },this.props.uploadProps);
-            return <div className="opt-btns">
-                <Btns localeCookie={this.props.localeCookie}
-                    powerBtns={this.props.powerBtns}
-                    btns={{
-                        reupload: {
-                            node:<Upload {...uploadP}>
-                                    <Btns localeCookie={this.props.localeCookie} type='line' powerBtns={this.props.powerBtns} btns={{ reupload:{} }}/>
-                                </Upload>
-                        },
-                        delete: {
-                            onClick: ()=>{this.deleteError(hoverData.uid)}
-                        },
-                    }}
-                />
-            </div>
-        }else if(hoverData.uploadStatus=='uploading'){
-            return <div className="opt-btns"></div>
-        }else{
-            return <div className="opt-btns">
-                <Btns localeCookie={this.props.localeCookie}
-                    powerBtns={this.props.powerBtns}
-                    type='line'
-                    btns={{
-                        download: {
-                            onClick: this.download
-                        },
-                        delete: {
-                            onClick: this.deleteConfirm
-                        },
-                    }}
-                />
-            </div>
-        }
-        
-    }
-
+ 
     deleteConfirm=()=>{
         this.setState({
             show:true
