@@ -34,7 +34,7 @@ import 'ac-file-list/build/FileList.css';
  * 成功和失败回调函数
  * @param {string} result 成功/失败  success 成功；error 失败
  * @param {string} type 接口类型：list 获得文件列表；delete 删除；upload 上传；download 下载
- * @param {object} result 接口返回信息
+ * @param {object} res 接口返回信息
  */
 function callback(result,type,res){
 
