@@ -1,3 +1,13 @@
+<a name="0.2.5"></a>
+## [0.2.5](https://github.com/tinper-bee/ac-file-list/compare/v0.2.4...v0.2.5) (2020-03-02)
+
+
+### Features
+
+* **ac-file-list:** 依赖组件版本放开 ([98a1b70](https://github.com/tinper-bee/ac-file-list/commit/98a1b70))
+
+
+
 <a name="0.2.4"></a>
 ## [0.2.4](https://github.com/tinper-bee/ac-file-list/compare/v0.2.3...v0.2.4) (2020-02-27)
 
