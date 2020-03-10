@@ -15,7 +15,7 @@
  },
  "homepage": "https://github.com/tinper-acs/ac-file-list.git",
  "author": "Yonyou FED",
- "repository": "http://github.com/tinper-bee/ac-file-list",
+ "repository": "http://github.com/tinper-acs/ac-file-list",
  "bugs": "https://github.com/tinper-acs/ac-file-list.git/issues",
  "license": "MIT",
  "main": "./build/index.js",
