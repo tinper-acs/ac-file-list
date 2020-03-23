@@ -1,3 +1,8 @@
+<a name="0.2.7"></a>
+## [0.2.7](https://github.com/tinper-acs/ac-file-list/compare/v0.2.6...v0.2.7) (2020-03-23)
+
+
+
 <a name="0.2.6"></a>
 ## [0.2.6](https://github.com/tinper-acs/ac-file-list/compare/v0.2.5...v0.2.6) (2020-03-13)
 
