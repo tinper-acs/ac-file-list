@@ -125,7 +125,6 @@ var FileList = function (_Component) {
                             data.forEach(function (item) {
                                 return item.userName = decodeURIComponent((0, _utils.getCookie)('yonyou_uname'));
                             });
-                            console.log(data);
                             _this.setState({
                                 data: data.reverse(),
                                 pageSize: params.pageSize,

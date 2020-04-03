@@ -1,3 +1,13 @@
+<a name="0.2.9"></a>
+## [0.2.9](https://github.com/tinper-acs/ac-file-list/compare/v0.2.7...v0.2.9) (2020-04-03)
+
+
+### Bug Fixes
+
+* 获取日期时添加用户信息 ([0bda77e](https://github.com/tinper-acs/ac-file-list/commit/0bda77e))
+
+
+
 <a name="0.2.7"></a>
 ## [0.2.7](https://github.com/tinper-acs/ac-file-list/compare/v0.2.6...v0.2.7) (2020-03-23)
 
