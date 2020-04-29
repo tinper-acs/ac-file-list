@@ -1,5 +1,10 @@
 <a name="0.2.9"></a>
-## [0.2.9](https://github.com/tinper-acs/ac-file-list/compare/v0.2.8...v0.2.9) (2020-04-03)
+## [0.2.9](https://github.com/tinper-acs/ac-file-list/compare/v0.2.8...v0.2.9) (2020-04-29)
+
+
+### Bug Fixes
+
+* 返回的数据不实用本地租户 ([a615451](https://github.com/tinper-acs/ac-file-list/commit/a615451))
 
 
 
