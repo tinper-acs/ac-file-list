@@ -206,7 +206,7 @@ class FileList extends Component {
                 if(res.status==200){
                     const data=res.data.data;
                     if(data){
-                        data.forEach(item=>item.userName=decodeURIComponent(getCookie('yonyou_uname')));
+                        //data.forEach(item=>item.userName=decodeURIComponent(getCookie('yonyou_uname')));
                         this.setState({
                             data:data.reverse(),
                             pageSize:params.pageSize,

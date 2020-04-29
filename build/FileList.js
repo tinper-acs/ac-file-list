@@ -122,9 +122,7 @@ var FileList = function (_Component) {
                     if (res.status == 200) {
                         var data = res.data.data;
                         if (data) {
-                            data.forEach(function (item) {
-                                return item.userName = decodeURIComponent((0, _utils.getCookie)('yonyou_uname'));
-                            });
+                            //data.forEach(item=>item.userName=decodeURIComponent(getCookie('yonyou_uname')));
                             _this.setState({
                                 data: data.reverse(),
                                 pageSize: params.pageSize,
