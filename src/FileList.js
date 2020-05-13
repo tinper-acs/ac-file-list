@@ -401,7 +401,7 @@ class FileList extends Component {
     }
 
     render(){
-        let { clsfix,id,disabled,uploadProps,canUnfold } = this.props;
+        let { clsfix,id,disabled,uploadProps,canUnfold,title } = this.props;
         let { data,open } = this.state;
         const uploadP =Object.assign({
             withCredentials:true,
@@ -417,7 +417,7 @@ class FileList extends Component {
                     {
                         canUnfold?<div className={`${clsfix}-text`} onClick={this.changeOpenStatus}>
                             <Icon type={open?'uf-triangle-down':'uf-triangle-right'}></Icon>
-                            <span>{this.localObj.file}</span>
+                            <span>{title?title:this.localObj.file}</span>
                         </div>:''
                     }
                     <div className={`${clsfix}-btns`}>

@@ -494,7 +494,8 @@ var FileList = function (_Component) {
             id = _props.id,
             disabled = _props.disabled,
             uploadProps = _props.uploadProps,
-            canUnfold = _props.canUnfold;
+            canUnfold = _props.canUnfold,
+            title = _props.title;
         var _state = this.state,
             data = _state.data,
             open = _state.open;
@@ -520,7 +521,7 @@ var FileList = function (_Component) {
                     _react2["default"].createElement(
                         'span',
                         null,
-                        this.localObj.file
+                        title ? title : this.localObj.file
                     )
                 ) : '',
                 _react2["default"].createElement(
