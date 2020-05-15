@@ -73,7 +73,14 @@ var propTypes = {
     url: _propTypes2["default"].object, //地址
     uploadProps: _propTypes2["default"].object, //附件上传参数
     powerBtns: _propTypes2["default"].array, //可用按钮集合
-    callback: _propTypes2["default"].func //回调 第一个参数：成功(success)/失败(error)； 第二个参数：list 获得文件列表；delete 删除； upload 上传。 第三个参数：成功信息/错误信息。 第四个参数：null/error对象
+    callback: _propTypes2["default"].func, //回调 第一个参数：成功(success)/失败(error)； 第二个参数：list 获得文件列表；delete 删除； upload 上传。 第三个参数：成功信息/错误信息。 第四个参数：null/error对象
+    toolbar: _propTypes2["default"].node, //动态肩部按钮
+    lineToolbar: _propTypes2["default"].node, //动态行按钮
+    afterGetList: _propTypes2["default"].func, //获取列表后可执行的操作
+    vitualDelete: _propTypes2["default"].func, //本地执行删除
+    recordActiveRow: _propTypes2["default"].func, //记录当前活动行
+    beforeAct: _propTypes2["default"].func, //执行操作前触发的方法；
+    type: _propTypes2["default"].string //使用者类型，mdf cn
 };
 
 var defaultProps = {
@@ -91,7 +98,9 @@ var defaultProps = {
     powerBtns: ['upload', 'reupload', 'download', 'delete', 'confirm', 'cancel'],
     localeCookie: 'locale',
     callback: function callback() {},
-    canUnfold: true
+    canUnfold: true,
+    toolbar: null,
+    lineToolbar: null
 };
 
 var FileList = function (_Component) {
@@ -102,11 +111,27 @@ var FileList = function (_Component) {
 
         var _this = _possibleConstructorReturn(this, _Component.call(this, props));
 
+        _this._handelBeforeAct = function (type) {
+            var data = _this.state.data;
+            var beforeAct = _this.props.beforeAct;
+
+            var flag = true;
+            if (beforeAct) {
+                if (!beforeAct(type, data)) {
+                    flag = false;
+                }
+            }
+            return flag;
+        };
+
         _this.getList = function () {
             var pageObj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
             var propsId = arguments[1];
 
             var id = propsId || _this.props.id;
+            var afterGetList = _this.props.afterGetList;
+
+            if (!_this._handelBeforeAct('list')) return;
             if (id) {
                 var url = _this.props.url.list.replace('{id}', id);
                 var params = _extends({
@@ -121,8 +146,12 @@ var FileList = function (_Component) {
                 }).then(function (res) {
                     if (res.status == 200) {
                         if (res.data.data) {
+                            var list = res.data.data;
+                            if (afterGetList) {
+                                list = afterGetList(list);
+                            }
                             _this.setState({
-                                data: res.data.data.reverse(),
+                                data: list.reverse(),
                                 pageSize: params.pageSize,
                                 pageNo: params.pageNo
                             });
@@ -159,6 +188,10 @@ var FileList = function (_Component) {
         };
 
         _this.onRowHover = function (index, record) {
+            var recordActiveRow = _this.props.recordActiveRow;
+
+            if (recordActiveRow) recordActiveRow(record);
+            _this.hoverData = record;
             _this.state.hoverData = record;
             _this.setState({
                 hoverData: record
@@ -201,6 +234,10 @@ var FileList = function (_Component) {
         };
 
         _this["delete"] = function () {
+            var vitualDelete = _this.props.vitualDelete;
+
+            if (!_this._handelBeforeAct('delete')) return;
+            if (vitualDelete && !vitualDelete(_this.state.hoverData, _this)) return; //本地删除
             var url = _this.props.url["delete"].replace('{id}', _this.state.hoverData.id);
             (0, _axios2["default"])(url, {
                 method: "delete",
@@ -225,7 +262,31 @@ var FileList = function (_Component) {
             });
         };
 
+        _this.batchDelete = function (params) {
+            var url = _this.props.url.batchDelete;
+            (0, _axios2["default"])(url, {
+                method: "delete",
+                params: params,
+                withCredentials: true
+            }).then(function (res) {
+                console.log(res);
+                if (res.status == 200) {
+                    _this.props.callback('success', 'batchDelete', res);
+                    console.log(_this.localObj['delSuccess']);
+                } else {
+                    _this.props.callback('error', 'batchDelete', res);
+                }
+            })["catch"](function (error) {
+                _this.setState({
+                    show: false
+                });
+                _this.props.callback('error', 'delete', error);
+                console.error(error);
+            });
+        };
+
         _this.download = function () {
+            if (!_this._handelBeforeAct('download')) return;
             var url = _this.props.url.info.replace('{id}', _this.state.hoverData.id);
             (0, _axios2["default"])(url, {
                 method: "get",
@@ -312,6 +373,7 @@ var FileList = function (_Component) {
             id: props.id,
             open: true
         };
+        _this.hoverData = {};
         _this.localObj = _i18n2["default"][(0, _utils.getCookie)(props.localeCookie)] || _i18n2["default"]['zh_CN'];
         _this.columns = [{
             title: _this.localObj.fileName,
@@ -425,7 +487,11 @@ var FileList = function (_Component) {
                         return _react2["default"].createElement(
                             'div',
                             { className: 'opt-btns' },
-                            _react2["default"].createElement(_acBtns2["default"], { localeCookie: props.localeCookie,
+                            _this.props.type == 'mdf' ? _react2["default"].createElement(
+                                'div',
+                                { className: 'file-list-linetoolbar-container' },
+                                props.lineToolbar
+                            ) : _react2["default"].createElement(_acBtns2["default"], { localeCookie: props.localeCookie,
                                 type: 'line',
                                 btns: {
                                     download: {
@@ -446,7 +512,12 @@ var FileList = function (_Component) {
     }
 
     FileList.prototype.componentDidMount = function componentDidMount() {
-        this.props.getListNow && this.getList();
+        var _props = this.props,
+            getChild = _props.getChild,
+            getListNow = _props.getListNow;
+
+        getChild && getChild(this);
+        getListNow && this.getList();
     };
 
     FileList.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
@@ -464,6 +535,8 @@ var FileList = function (_Component) {
         }
     };
 
+    /*操作前处理方法*/
+
     /**获得文件列表 */
 
     /**划过 */
@@ -472,6 +545,8 @@ var FileList = function (_Component) {
 
 
     /**删除 */
+
+    /*批量删除*/
 
 
     // pageIndexChange=(pageNo)=>{
@@ -487,12 +562,14 @@ var FileList = function (_Component) {
 
 
     FileList.prototype.render = function render() {
-        var _props = this.props,
-            clsfix = _props.clsfix,
-            id = _props.id,
-            disabled = _props.disabled,
-            uploadProps = _props.uploadProps,
-            canUnfold = _props.canUnfold;
+        var _props2 = this.props,
+            clsfix = _props2.clsfix,
+            id = _props2.id,
+            disabled = _props2.disabled,
+            uploadProps = _props2.uploadProps,
+            canUnfold = _props2.canUnfold,
+            toolbar = _props2.toolbar,
+            type = _props2.type;
         var _state = this.state,
             data = _state.data,
             open = _state.open;
@@ -531,7 +608,7 @@ var FileList = function (_Component) {
                                 node: _react2["default"].createElement(
                                     _beeUpload2["default"],
                                     uploadP,
-                                    _react2["default"].createElement(_acBtns2["default"], { localeCookie: this.props.localeCookie, powerBtns: this.props.powerBtns, btns: { upload: {} } })
+                                    type == 'mdf' ? toolbar : _react2["default"].createElement(_acBtns2["default"], { localeCookie: this.props.localeCookie, powerBtns: this.props.powerBtns, btns: { upload: {} } })
                                 )
                             }
                         }

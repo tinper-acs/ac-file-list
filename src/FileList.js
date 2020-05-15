@@ -21,6 +21,13 @@ const propTypes = {
     uploadProps:PropTypes.object,//附件上传参数
     powerBtns:PropTypes.array,//可用按钮集合
     callback:PropTypes.func,//回调 第一个参数：成功(success)/失败(error)； 第二个参数：list 获得文件列表；delete 删除； upload 上传。 第三个参数：成功信息/错误信息。 第四个参数：null/error对象
+    toolbar:PropTypes.node, //动态肩部按钮
+    lineToolbar:PropTypes.node, //动态行按钮
+    afterGetList:PropTypes.func,//获取列表后可执行的操作
+    vitualDelete:PropTypes.func,//本地执行删除
+    recordActiveRow:PropTypes.func,//记录当前活动行
+    beforeAct:PropTypes.func,//执行操作前触发的方法；
+    type:PropTypes.string,//使用者类型，mdf cn
 };
 
 const defaultProps = {
@@ -38,7 +45,9 @@ const defaultProps = {
     powerBtns:['upload','reupload','download','delete','confirm','cancel'],
     localeCookie:'locale',
     callback:()=>{},
-    canUnfold:true
+    canUnfold:true,
+    toolbar:null,
+    lineToolbar:null
 };
 
 class FileList extends Component {
@@ -54,6 +63,7 @@ class FileList extends Component {
             id:props.id,
             open:true
         }
+        this.hoverData={};
         this.localObj = i18n[getCookie(props.localeCookie)]||i18n['zh_CN'];
         this.columns = [{
             title: this.localObj.fileName,
@@ -65,113 +75,119 @@ class FileList extends Component {
                 return getFileNames(text,record.fileExtension);
             }
         },
-        {
-            title: this.localObj.fileExtension,
-            dataIndex: "fileExtension",
-            key: "fileExtension",
-            width: 100
-        },
-        {
-            title: this.localObj.fileSize,
-            dataIndex: "fileSizeText",
-            key: "fileSizeText",
-            width: 100
-        },
-        {
-            title: this.localObj.createrUser,
-            dataIndex: "userName",
-            key: "userName",
-            width: 200,
-            render:(text,record,index)=>{
-                if(record.uploadStatus=='uploading'){
-                    return <ProgressBar className="uploading" size="sm" active now = {20} />
-                }else if(record.uploadStatus=='error'){
-                    return <ProgressBar size="sm" active now = {90} />
-                }else if(record.uploadStatus=='done'){
-                    return decodeURIComponent(getCookie('yonyou_uname'))
-                }else{
-                    return text;
-                }
-            }
-        },
-        {
-            title: this.localObj.createrTime,
-            dataIndex: "ctime",
-            key: "ctime",
-            width: 200,
-            render:(text,record,index)=>{
-                if(record.uploadStatus=='uploading'){
-                    return <span className='upload-status uploading'> <Icon type='uf-loadingstate'/> {this.localObj.uploading} </span>
-                }else if(record.uploadStatus=='error'){
-                    return <span className='upload-status error' title={record.errorMsg||this.localObj.uploadError}> <Icon type='uf-exc-c'/>{record.errorMsg||this.localObj.uploadError}</span>
-                }else if(record.uploadStatus=='done'){
-                    return dateFormate(new Date(),'yyyy-MM-dd hh:mm')
-                }else{
-                    return dateFormate(new Date(text),'yyyy-MM-dd hh:mm')
-                }
-            }
-        },
-        {
-            title: this.localObj.operation,
-            dataIndex: "e",
-            key: "e",
-            width: 200,
-            render:(text,record,index)=>{
-                if(!this.props.disabled){
-                    if(record.uploadStatus=='error'){
-                        const uploadP = Object.assign({
-                            name: 'files',
-                            action:this.props.url.upload.replace('{id}',this.props.id),
-                            onChange:this.fileChange,
-                            multiple:true,
-                            beforeUpload:this.reUpload,
-                            withCredentials:true
-                        },this.props.uploadProps);
-                        return <div className="opt-btns">
-                            <Btns localeCookie={this.props.localeCookie}
-                                powerBtns={this.props.powerBtns}
-                                type='line'
-                                btns={{
-                                    reupload: {
-                                        node:<Upload {...uploadP}>
-                                                <Btns localeCookie={this.props.localeCookie} 
-                                                    powerBtns={this.props.powerBtns} 
-                                                    type='line' 
-                                                    btns={{ reupload:{} }}/>
-                                            </Upload>
-                                    },
-                                    delete: {
-                                        onClick: ()=>{this.deleteError(record.uid)}
-                                    },
-                                }}
-                                powerBtns={props.powerBtns}
-                            />
-                        </div>
-                    }else if(record.uploadStatus=='uploading'){
-                        return <div className="opt-btns"></div>
+            {
+                title: this.localObj.fileExtension,
+                dataIndex: "fileExtension",
+                key: "fileExtension",
+                width: 100
+            },
+            {
+                title: this.localObj.fileSize,
+                dataIndex: "fileSizeText",
+                key: "fileSizeText",
+                width: 100
+            },
+            {
+                title: this.localObj.createrUser,
+                dataIndex: "userName",
+                key: "userName",
+                width: 200,
+                render:(text,record,index)=>{
+                    if(record.uploadStatus=='uploading'){
+                        return <ProgressBar className="uploading" size="sm" active now = {20} />
+                    }else if(record.uploadStatus=='error'){
+                        return <ProgressBar size="sm" active now = {90} />
+                    }else if(record.uploadStatus=='done'){
+                        return decodeURIComponent(getCookie('yonyou_uname'))
                     }else{
-                        return <div className="opt-btns">
-                            <Btns localeCookie={props.localeCookie}
-                                type='line'
-                                btns={{
-                                    download: {
-                                        onClick: this.download
-                                    },
-                                    delete: {
-                                        onClick: this.deleteConfirm
-                                    },
-                                }}
-                                powerBtns={props.powerBtns}
-                            />
-                        </div>
+                        return text;
                     }
                 }
-                
-            }
-        }];
+            },
+            {
+                title: this.localObj.createrTime,
+                dataIndex: "ctime",
+                key: "ctime",
+                width: 200,
+                render:(text,record,index)=>{
+                    if(record.uploadStatus=='uploading'){
+                        return <span className='upload-status uploading'> <Icon type='uf-loadingstate'/> {this.localObj.uploading} </span>
+                    }else if(record.uploadStatus=='error'){
+                        return <span className='upload-status error' title={record.errorMsg||this.localObj.uploadError}> <Icon type='uf-exc-c'/>{record.errorMsg||this.localObj.uploadError}</span>
+                    }else if(record.uploadStatus=='done'){
+                        return dateFormate(new Date(),'yyyy-MM-dd hh:mm')
+                    }else{
+                        return dateFormate(new Date(text),'yyyy-MM-dd hh:mm')
+                    }
+                }
+            },
+            {
+                title: this.localObj.operation,
+                dataIndex: "e",
+                key: "e",
+                width: 200,
+                render:(text,record,index)=>{
+                    if(!this.props.disabled){
+                        if(record.uploadStatus=='error'){
+                            const uploadP = Object.assign({
+                                name: 'files',
+                                action:this.props.url.upload.replace('{id}',this.props.id),
+                                onChange:this.fileChange,
+                                multiple:true,
+                                beforeUpload:this.reUpload,
+                                withCredentials:true
+                            },this.props.uploadProps);
+                            return <div className="opt-btns">
+                                <Btns localeCookie={this.props.localeCookie}
+                                      powerBtns={this.props.powerBtns}
+                                      type='line'
+                                      btns={{
+                                          reupload: {
+                                              node:<Upload {...uploadP}>
+                                                  <Btns localeCookie={this.props.localeCookie}
+                                                        powerBtns={this.props.powerBtns}
+                                                        type='line'
+                                                        btns={{ reupload:{} }}/>
+                                              </Upload>
+                                          },
+                                          delete: {
+                                              onClick: ()=>{this.deleteError(record.uid)}
+                                          },
+                                      }}
+                                      powerBtns={props.powerBtns}
+                                />
+                            </div>
+                        }else if(record.uploadStatus=='uploading'){
+                            return <div className="opt-btns"></div>
+                        }else{
+                            return <div className="opt-btns">
+                                {this.props.type =='mdf' ?
+                                    <div className="file-list-linetoolbar-container">{props.lineToolbar}</div>
+                                    : <Btns localeCookie={props.localeCookie}
+                                            type='line'
+                                            btns={{
+                                                download: {
+                                                    onClick: this.download
+                                                },
+                                                delete: {
+                                                    onClick: this.deleteConfirm
+                                                },
+                                            }}
+                                            powerBtns={props.powerBtns}
+                                />}
+
+
+                            </div>
+                        }
+                    }
+
+                }
+            }];
     }
     componentDidMount(){
-        this.props.getListNow&&this.getList()
+        const {getChild,getListNow}=this.props;
+        getChild && getChild(this);
+        getListNow && this.getList();
     }
     componentWillReceiveProps(nextProps){
         if(nextProps.id!=this.state.id){
@@ -188,9 +204,23 @@ class FileList extends Component {
         }
     }
 
+    /*操作前处理方法*/
+    _handelBeforeAct=(type)=>{
+        const {data}=this.state;
+        const {beforeAct}=this.props;
+        let flag=true;
+        if(beforeAct){
+            if(!beforeAct(type,data)){
+                flag=false;
+            }
+        }
+        return flag
+    }
     /**获得文件列表 */
     getList=(pageObj={},propsId)=>{
         let id = propsId||this.props.id;
+        let {afterGetList} =this.props;
+        if(!this._handelBeforeAct('list')) return;
         if(id){
             let url = this.props.url.list.replace('{id}',id)
             let params=Object.assign({
@@ -205,8 +235,12 @@ class FileList extends Component {
             }).then((res)=>{
                 if(res.status==200){
                     if(res.data.data){
+                        let list = res.data.data;
+                        if(afterGetList){
+                            list=afterGetList(list)
+                        }
                         this.setState({
-                            data:res.data.data.reverse(),
+                            data:list.reverse(),
                             pageSize:params.pageSize,
                             pageNo:params.pageNo
                         })
@@ -220,7 +254,7 @@ class FileList extends Component {
                 console.error(error)
             })
         }
-        
+
     }
 
     getSelectedDataFunc = (selectedList,record,index) => {
@@ -240,10 +274,13 @@ class FileList extends Component {
         this.setState({
             data,
             selectedList
-        })    
+        })
     };
     /**划过 */
     onRowHover = (index,record) => {
+        const {recordActiveRow} =this.props;
+        if(recordActiveRow) recordActiveRow(record);
+        this.hoverData=record;
         this.state.hoverData = record;
         this.setState({
             hoverData:record
@@ -272,7 +309,7 @@ class FileList extends Component {
         })
     }
 
- 
+
     deleteConfirm=()=>{
         this.setState({
             show:true
@@ -283,9 +320,12 @@ class FileList extends Component {
             show:false
         })
     }
-    
+
     /**删除 */
     delete=()=>{
+        const {vitualDelete}=this.props;
+        if(!this._handelBeforeAct('delete')) return;
+        if(vitualDelete && !vitualDelete(this.state.hoverData,this)) return; //本地删除
         let url = this.props.url.delete.replace('{id}',this.state.hoverData.id);
         request(url, {
             method: "delete",
@@ -310,6 +350,7 @@ class FileList extends Component {
         })
     }
     download=()=>{
+        if(!this._handelBeforeAct('download')) return;
         let url = this.props.url.info.replace('{id}',this.state.hoverData.id)
         request(url, {
             method: "get",
@@ -358,7 +399,7 @@ class FileList extends Component {
             })
             this.props.callback('success','upload',info.file.response);
             console.log(this.localObj['uploadSuccess'])
-        }  
+        }
         if (info.file.status === 'removed') {
             let msg = info.file.response.displayMessage[getCookie(this.props.localeCookie)]||info.file.response.displayMessage['zh_CN']
             console.error(`${info.file.name} ${this.localObj['uploadError']}`);
@@ -399,7 +440,7 @@ class FileList extends Component {
     }
 
     render(){
-        let { clsfix,id,disabled,uploadProps,canUnfold } = this.props;
+        let { clsfix,id,disabled,uploadProps,canUnfold,toolbar,type } = this.props;
         let { data,open } = this.state;
         const uploadP =Object.assign({
             withCredentials:true,
@@ -407,8 +448,8 @@ class FileList extends Component {
             action: this.props.url.upload.replace('{id}',this.props.id),
             onChange:this.fileChange,
             multiple:true,
-            beforeUpload:this.beforeUpload
-        },uploadProps) 
+            beforeUpload:this.beforeUpload,
+        },uploadProps)
         return(
             <div className={clsfix}>
                 <div  className={open?`${clsfix}-header`:`${clsfix}-header close`}>
@@ -421,23 +462,23 @@ class FileList extends Component {
                     <div className={`${clsfix}-btns`}>
                         {
                             disabled?'':<Btns localeCookie={this.props.localeCookie}
-                            powerBtns={this.props.powerBtns}
-                            btns={{
-                                upload:{
-                                    node:<Upload {...uploadP}>
-                                            <Btns localeCookie={this.props.localeCookie} powerBtns={this.props.powerBtns} btns={{ upload:{} }}/>
-                                        </Upload>
-                                },
-                            }}
-                        />
+                                              powerBtns={this.props.powerBtns}
+                                              btns={{
+                                                  upload:{
+                                                      node:<Upload {...uploadP}>
+                                                          {type == 'mdf' ? toolbar : <Btns localeCookie={this.props.localeCookie} powerBtns={this.props.powerBtns} btns={{ upload:{} }}/>}
+                                                      </Upload>
+                                                  },
+                                              }}
+                            />
                         }
-                        
+
                     </div>
                 </div>
                 <div className={open?`${clsfix}-file-area`:`${clsfix}-file-area hide`}>
-                    <Table  
-                        columns={this.columns} 
-                        data={data} 
+                    <Table
+                        columns={this.columns}
+                        data={data}
                         rowKey={(record,index)=>index}
                         scroll = {{y:400}}
                         getSelectedDataFunc={this.getSelectedDataFunc}
@@ -450,34 +491,34 @@ class FileList extends Component {
                         className='pop_dialog'
                         show = { this.state.show }
                         onHide = { this.cancelFn } >
-                            <Modal.Header closeButton>
-                                <Modal.Title>{this.localObj.delete}</Modal.Title>
-                            </Modal.Header>
+                        <Modal.Header closeButton>
+                            <Modal.Title>{this.localObj.delete}</Modal.Title>
+                        </Modal.Header>
 
-                            <Modal.Body className="pop_body">
-                                <div>
+                        <Modal.Body className="pop_body">
+                            <div>
                                     <span class="keyword">
                                         <i class="uf uf-exc-c-2 "></i>{this.localObj.delete}
                                     </span>
-                                    <span className="pop_dialog-ctn">
+                                <span className="pop_dialog-ctn">
                                         {this.localObj.delSure}
                                     </span>
-                                </div>
-                            </Modal.Body>
+                            </div>
+                        </Modal.Body>
 
-                            <Modal.Footer className="pop_footer">
-                                <Btns localeCookie={this.props.localeCookie}
-                                    powerBtns={this.props.powerBtns}
-                                    btns={{
-                                        confirm:{
-                                            onClick:this.delete
-                                        },
-                                        cancel:{
-                                            onClick:this.cancelFn
-                                        },
-                                    }}
-                                />
-                            </Modal.Footer>
+                        <Modal.Footer className="pop_footer">
+                            <Btns localeCookie={this.props.localeCookie}
+                                  powerBtns={this.props.powerBtns}
+                                  btns={{
+                                      confirm:{
+                                          onClick:this.delete
+                                      },
+                                      cancel:{
+                                          onClick:this.cancelFn
+                                      },
+                                  }}
+                            />
+                        </Modal.Footer>
                     </Modal>
                 </div>
             </div>

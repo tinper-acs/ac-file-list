@@ -14030,12 +14030,12 @@
 	    'close': '关闭',
 	
 	    'en-us': {
-	        'copy': 'copy',
-	        'cut': 'cut',
-	        'copyReady': 'copied',
-	        'cutReady': 'cut',
-	        'copyToClipboard': 'copy to clipboard',
-	        'close': 'close'
+	        'copy': 'Copy',
+	        'cut': 'Cut',
+	        'copyReady': 'Copied',
+	        'cutReady': 'Cut',
+	        'copyToClipboard': 'Copy to Clipboard',
+	        'close': 'Close'
 	    },
 	    'zh-tw': {
 	        'copy': '複製',
@@ -37330,7 +37330,14 @@
 	    url: _propTypes2['default'].object, //地址
 	    uploadProps: _propTypes2['default'].object, //附件上传参数
 	    powerBtns: _propTypes2['default'].array, //可用按钮集合
-	    callback: _propTypes2['default'].func //回调 第一个参数：成功(success)/失败(error)； 第二个参数：list 获得文件列表；delete 删除； upload 上传。 第三个参数：成功信息/错误信息。 第四个参数：null/error对象
+	    callback: _propTypes2['default'].func, //回调 第一个参数：成功(success)/失败(error)； 第二个参数：list 获得文件列表；delete 删除； upload 上传。 第三个参数：成功信息/错误信息。 第四个参数：null/error对象
+	    toolbar: _propTypes2['default'].node, //动态肩部按钮
+	    lineToolbar: _propTypes2['default'].node, //动态行按钮
+	    afterGetList: _propTypes2['default'].func, //获取列表后可执行的操作
+	    vitualDelete: _propTypes2['default'].func, //本地执行删除
+	    recordActiveRow: _propTypes2['default'].func, //记录当前活动行
+	    beforeAct: _propTypes2['default'].func, //执行操作前触发的方法；
+	    type: _propTypes2['default'].string //使用者类型，mdf cn
 	};
 	
 	var defaultProps = {
@@ -37348,7 +37355,9 @@
 	    powerBtns: ['upload', 'reupload', 'download', 'delete', 'confirm', 'cancel'],
 	    localeCookie: 'locale',
 	    callback: function callback() {},
-	    canUnfold: true
+	    canUnfold: true,
+	    toolbar: null,
+	    lineToolbar: null
 	};
 	
 	var FileList = function (_Component) {
@@ -37359,205 +37368,7 @@
 	
 	        var _this = _possibleConstructorReturn(this, _Component.call(this, props));
 	
-	        _this.getList = function () {
-	            var pageObj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-	            var propsId = arguments[1];
-	
-	            var id = propsId || _this.props.id;
-	            if (id) {
-	                var url = _this.props.url.list.replace('{id}', id);
-	                var params = _extends({
-	                    pageSize: _this.state.pageSize,
-	                    fileName: '',
-	                    pageNo: _this.state.pageNo //从1开始
-	                }, pageObj);
-	                (0, _axios2['default'])(url, {
-	                    method: "get",
-	                    params: params,
-	                    withCredentials: true
-	                }).then(function (res) {
-	                    if (res.status == 200) {
-	                        if (res.data.data) {
-	                            _this.setState({
-	                                data: res.data.data.reverse(),
-	                                pageSize: params.pageSize,
-	                                pageNo: params.pageNo
-	                            });
-	                        }
-	                        _this.props.callback('success', 'list', res);
-	                    } else {
-	                        _this.props.callback('error', 'list', res);
-	                    }
-	                })['catch'](function (error) {
-	                    _this.props.callback('error', 'list', error);
-	                    console.error(error);
-	                });
-	            }
-	        };
-	
-	        _this.getSelectedDataFunc = function (selectedList, record, index) {
-	            var ids = [];
-	            selectedList.forEach(function (item, index) {
-	                ids.push(item.id);
-	            });
-	
-	            var data = (0, _cloneDeep2['default'])(_this.state.data);
-	            data.forEach(function (item, index) {
-	                if (ids.indexOf(item.id) == -1) {
-	                    item._checked = false;
-	                } else {
-	                    item._checked = true;
-	                }
-	            });
-	            _this.setState({
-	                data: data,
-	                selectedList: selectedList
-	            });
-	        };
-	
-	        _this.onRowHover = function (index, record) {
-	            _this.state.hoverData = record;
-	            _this.setState({
-	                hoverData: record
-	            });
-	        };
-	
-	        _this.deleteError = function (uid) {
-	            var data = (0, _cloneDeep2['default'])(_this.state.data);
-	            data.forEach(function (item, index) {
-	                if (item.uid == uid) data.splice(index, 1);
-	            });
-	            _this.setState({
-	                data: data
-	            });
-	        };
-	
-	        _this.reUpload = function (fileInfo, fileList) {
-	            var data = (0, _cloneDeep2['default'])(_this.state.data);
-	            var uid = _this.state.hoverData.uid;
-	            data.forEach(function (item, index) {
-	                if (item.uid == uid) data.splice(index, 1);
-	            });
-	            _this.setState({
-	                data: data
-	            }, function () {
-	                _this.beforeUpload(fileInfo, fileList);
-	            });
-	        };
-	
-	        _this.deleteConfirm = function () {
-	            _this.setState({
-	                show: true
-	            });
-	        };
-	
-	        _this.cancelFn = function () {
-	            _this.setState({
-	                show: false
-	            });
-	        };
-	
-	        _this['delete'] = function () {
-	            var url = _this.props.url['delete'].replace('{id}', _this.state.hoverData.id);
-	            (0, _axios2['default'])(url, {
-	                method: "delete",
-	                withCredentials: true
-	            }).then(function (res) {
-	                if (res.status == 200) {
-	                    _this.props.callback('success', 'delete', res);
-	                    console.log(_this.localObj['delSuccess']);
-	                    _this.getList();
-	                    _this.setState({
-	                        show: false
-	                    });
-	                } else {
-	                    _this.props.callback('error', 'delete', res);
-	                }
-	            })['catch'](function (error) {
-	                _this.setState({
-	                    show: false
-	                });
-	                _this.props.callback('error', 'delete', error);
-	                console.error(error);
-	            });
-	        };
-	
-	        _this.download = function () {
-	            var url = _this.props.url.info.replace('{id}', _this.state.hoverData.id);
-	            (0, _axios2['default'])(url, {
-	                method: "get",
-	                withCredentials: true
-	            }).then(function (res) {
-	                if (res.status == 200) {
-	                    window.open(res.data.filePath);
-	                    _this.props.callback('success', 'download', res);
-	                    console.log(_this.localObj['downloadSuccess']);
-	                } else {
-	                    _this.props.callback('error', 'download', res);
-	                }
-	            })['catch'](function (error) {
-	                _this.props.callback('error', 'download', error);
-	                console.error(error);
-	            });
-	        };
-	
-	        _this.fileChange = function (info) {
-	            var data = (0, _cloneDeep2['default'])(_this.state.data);
-	            if (info.file.status !== 'uploading') {}
-	            if (info.file.status === 'done') {
-	                var id = info.file.response.data[0].id;
-	                data.forEach(function (item) {
-	                    if (item.uid == info.file.uid) {
-	                        item.uploadStatus = 'done';
-	                        item.id = id;
-	                    }
-	                });
-	                _this.setState({
-	                    data: data
-	                });
-	                _this.props.callback('success', 'upload', info.file.response);
-	                console.log(_this.localObj['uploadSuccess']);
-	            }
-	            if (info.file.status === 'removed') {
-	                var msg = info.file.response.displayMessage[(0, _utils.getCookie)(_this.props.localeCookie)] || info.file.response.displayMessage['zh_CN'];
-	                console.error(info.file.name + ' ' + _this.localObj['uploadError']);
-	                _this.props.callback('error', 'upload', info.file.response);
-	                data.forEach(function (item) {
-	                    if (item.uid == info.file.uid) {
-	                        item.uploadStatus = 'error';
-	                        item.errorMsg = msg;
-	                    }
-	                });
-	                _this.setState({
-	                    data: data
-	                });
-	            }
-	        };
-	
-	        _this.beforeUpload = function (file, fileList) {
-	            var data = (0, _cloneDeep2['default'])(_this.state.data);
-	            fileList.forEach(function (fileInfo, index) {
-	                var nameAry = fileInfo.name.split('.');
-	                var obj = {
-	                    fileExtension: '.' + nameAry[nameAry.length - 1],
-	                    fileName: nameAry.splice(0, nameAry.length - 1).join('.'),
-	                    fileSizeText: (0, _utils.getSize)(fileInfo.size),
-	                    uid: fileInfo.uid,
-	                    userName: decodeURIComponent((0, _utils.getCookie)('yonyou_uname')),
-	                    uploadStatus: 'uploading'
-	                };
-	                data.unshift(obj);
-	            });
-	            _this.setState({
-	                data: data
-	            });
-	        };
-	
-	        _this.changeOpenStatus = function () {
-	            _this.setState({
-	                open: !_this.state.open
-	            });
-	        };
+	        _initialiseProps.call(_this);
 	
 	        _this.state = {
 	            data: [],
@@ -37693,7 +37504,8 @@
 	                                    }
 	                                },
 	                                powerBtns: props.powerBtns
-	                            })
+	                            }),
+	                            props.lineToolbar
 	                        );
 	                    }
 	                }
@@ -37703,7 +37515,12 @@
 	    }
 	
 	    FileList.prototype.componentDidMount = function componentDidMount() {
-	        this.props.getListNow && this.getList();
+	        var _props = this.props,
+	            getChild = _props.getChild,
+	            getListNow = _props.getListNow;
+	
+	        getChild && getChild(this);
+	        getListNow && this.getList();
 	    };
 	
 	    FileList.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
@@ -37720,6 +37537,7 @@
 	            });
 	        }
 	    };
+	    /*操作前处理方法*/
 	
 	    /**获得文件列表 */
 	
@@ -37744,12 +37562,14 @@
 	
 	
 	    FileList.prototype.render = function render() {
-	        var _props = this.props,
-	            clsfix = _props.clsfix,
-	            id = _props.id,
-	            disabled = _props.disabled,
-	            uploadProps = _props.uploadProps,
-	            canUnfold = _props.canUnfold;
+	        var _props2 = this.props,
+	            clsfix = _props2.clsfix,
+	            id = _props2.id,
+	            disabled = _props2.disabled,
+	            uploadProps = _props2.uploadProps,
+	            canUnfold = _props2.canUnfold,
+	            toolbar = _props2.toolbar,
+	            type = _props2.type;
 	        var _state = this.state,
 	            data = _state.data,
 	            open = _state.open;
@@ -37788,7 +37608,7 @@
 	                                node: _react2['default'].createElement(
 	                                    _beeUpload2['default'],
 	                                    uploadP,
-	                                    _react2['default'].createElement(_acBtns2['default'], { localeCookie: this.props.localeCookie, powerBtns: this.props.powerBtns, btns: { upload: {} } })
+	                                    type == 'mdf' ? toolbar : _react2['default'].createElement(_acBtns2['default'], { localeCookie: this.props.localeCookie, powerBtns: this.props.powerBtns, btns: { upload: {} } })
 	                                )
 	                            }
 	                        }
@@ -37867,6 +37687,238 @@
 	
 	    return FileList;
 	}(_react.Component);
+	
+	var _initialiseProps = function _initialiseProps() {
+	    var _this2 = this;
+	
+	    this._handelBeforeAct = function (type) {
+	        var data = _this2.state.data;
+	        var beforeAct = _this2.props.beforeAct;
+	
+	        var flag = true;
+	        if (beforeAct) {
+	            if (!beforeAct(type, data)) {
+	                flag = false;
+	            }
+	        }
+	        return flag;
+	    };
+	
+	    this.getList = function () {
+	        var pageObj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+	        var propsId = arguments[1];
+	
+	        var id = propsId || _this2.props.id;
+	        var afterGetList = _this2.props.afterGetList;
+	
+	        if (!_this2._handelBeforeAct('list')) return;
+	        if (id) {
+	            var url = _this2.props.url.list.replace('{id}', id);
+	            var params = _extends({
+	                pageSize: _this2.state.pageSize,
+	                fileName: '',
+	                pageNo: _this2.state.pageNo //从1开始
+	            }, pageObj);
+	            (0, _axios2['default'])(url, {
+	                method: "get",
+	                params: params,
+	                withCredentials: true
+	            }).then(function (res) {
+	                if (res.status == 200) {
+	                    if (res.data.data) {
+	                        var list = res.data.data;
+	                        afterGetList && afterGetList(list);
+	                        _this2.setState({
+	                            data: list.reverse(),
+	                            pageSize: params.pageSize,
+	                            pageNo: params.pageNo
+	                        });
+	                    }
+	                    _this2.props.callback('success', 'list', res);
+	                } else {
+	                    _this2.props.callback('error', 'list', res);
+	                }
+	            })['catch'](function (error) {
+	                _this2.props.callback('error', 'list', error);
+	                console.error(error);
+	            });
+	        }
+	    };
+	
+	    this.getSelectedDataFunc = function (selectedList, record, index) {
+	        var ids = [];
+	        selectedList.forEach(function (item, index) {
+	            ids.push(item.id);
+	        });
+	
+	        var data = (0, _cloneDeep2['default'])(_this2.state.data);
+	        data.forEach(function (item, index) {
+	            if (ids.indexOf(item.id) == -1) {
+	                item._checked = false;
+	            } else {
+	                item._checked = true;
+	            }
+	        });
+	        _this2.setState({
+	            data: data,
+	            selectedList: selectedList
+	        });
+	    };
+	
+	    this.onRowHover = function (index, record) {
+	        var _props3 = props,
+	            recordActiveRow = _props3.recordActiveRow;
+	
+	        if (recordActiveRow) recordActiveRow(record);
+	        _this2.state.hoverData = record;
+	        _this2.setState({
+	            hoverData: record
+	        });
+	    };
+	
+	    this.deleteError = function (uid) {
+	        var data = (0, _cloneDeep2['default'])(_this2.state.data);
+	        data.forEach(function (item, index) {
+	            if (item.uid == uid) data.splice(index, 1);
+	        });
+	        _this2.setState({
+	            data: data
+	        });
+	    };
+	
+	    this.reUpload = function (fileInfo, fileList) {
+	        var data = (0, _cloneDeep2['default'])(_this2.state.data);
+	        var uid = _this2.state.hoverData.uid;
+	        data.forEach(function (item, index) {
+	            if (item.uid == uid) data.splice(index, 1);
+	        });
+	        _this2.setState({
+	            data: data
+	        }, function () {
+	            _this2.beforeUpload(fileInfo, fileList);
+	        });
+	    };
+	
+	    this.deleteConfirm = function () {
+	        _this2.setState({
+	            show: true
+	        });
+	    };
+	
+	    this.cancelFn = function () {
+	        _this2.setState({
+	            show: false
+	        });
+	    };
+	
+	    this['delete'] = function () {
+	        var _props4 = props,
+	            vitualDelete = _props4.vitualDelete;
+	
+	        if (!_this2._handelBeforeAct('delete')) return;
+	        if (vitualDelete && !vitualDelete(_this2.state.hoverData, _this2)) return; //本地删除
+	        var url = _this2.props.url['delete'].replace('{id}', _this2.state.hoverData.id);
+	        (0, _axios2['default'])(url, {
+	            method: "delete",
+	            withCredentials: true
+	        }).then(function (res) {
+	            if (res.status == 200) {
+	                _this2.props.callback('success', 'delete', res);
+	                console.log(_this2.localObj['delSuccess']);
+	                _this2.getList();
+	                _this2.setState({
+	                    show: false
+	                });
+	            } else {
+	                _this2.props.callback('error', 'delete', res);
+	            }
+	        })['catch'](function (error) {
+	            _this2.setState({
+	                show: false
+	            });
+	            _this2.props.callback('error', 'delete', error);
+	            console.error(error);
+	        });
+	    };
+	
+	    this.download = function () {
+	        if (!_this2._handelBeforeAct('download')) return;
+	        var url = _this2.props.url.info.replace('{id}', _this2.state.hoverData.id);
+	        (0, _axios2['default'])(url, {
+	            method: "get",
+	            withCredentials: true
+	        }).then(function (res) {
+	            if (res.status == 200) {
+	                window.open(res.data.filePath);
+	                _this2.props.callback('success', 'download', res);
+	                console.log(_this2.localObj['downloadSuccess']);
+	            } else {
+	                _this2.props.callback('error', 'download', res);
+	            }
+	        })['catch'](function (error) {
+	            _this2.props.callback('error', 'download', error);
+	            console.error(error);
+	        });
+	    };
+	
+	    this.fileChange = function (info) {
+	        var data = (0, _cloneDeep2['default'])(_this2.state.data);
+	        if (info.file.status !== 'uploading') {}
+	        if (info.file.status === 'done') {
+	            var id = info.file.response.data[0].id;
+	            data.forEach(function (item) {
+	                if (item.uid == info.file.uid) {
+	                    item.uploadStatus = 'done';
+	                    item.id = id;
+	                }
+	            });
+	            _this2.setState({
+	                data: data
+	            });
+	            _this2.props.callback('success', 'upload', info.file.response);
+	            console.log(_this2.localObj['uploadSuccess']);
+	        }
+	        if (info.file.status === 'removed') {
+	            var msg = info.file.response.displayMessage[(0, _utils.getCookie)(_this2.props.localeCookie)] || info.file.response.displayMessage['zh_CN'];
+	            console.error(info.file.name + ' ' + _this2.localObj['uploadError']);
+	            _this2.props.callback('error', 'upload', info.file.response);
+	            data.forEach(function (item) {
+	                if (item.uid == info.file.uid) {
+	                    item.uploadStatus = 'error';
+	                    item.errorMsg = msg;
+	                }
+	            });
+	            _this2.setState({
+	                data: data
+	            });
+	        }
+	    };
+	
+	    this.beforeUpload = function (file, fileList) {
+	        var data = (0, _cloneDeep2['default'])(_this2.state.data);
+	        fileList.forEach(function (fileInfo, index) {
+	            var nameAry = fileInfo.name.split('.');
+	            var obj = {
+	                fileExtension: '.' + nameAry[nameAry.length - 1],
+	                fileName: nameAry.splice(0, nameAry.length - 1).join('.'),
+	                fileSizeText: (0, _utils.getSize)(fileInfo.size),
+	                uid: fileInfo.uid,
+	                userName: decodeURIComponent((0, _utils.getCookie)('yonyou_uname')),
+	                uploadStatus: 'uploading'
+	            };
+	            data.unshift(obj);
+	        });
+	        _this2.setState({
+	            data: data
+	        });
+	    };
+	
+	    this.changeOpenStatus = function () {
+	        _this2.setState({
+	            open: !_this2.state.open
+	        });
+	    };
+	};
 	
 	;
 	
@@ -41330,11 +41382,11 @@
 	      var record = data[i];
 	      var key = this.getRowKey(record, i);
 	      // 兼容 NCC 以前的业务逻辑，支持外部通过 record 中的 isleaf 字段，判断是否为叶子节点
-	      record['isLeaf'] = typeof record['isleaf'] === 'boolean' ? record['isleaf'] : record['isLeaf'];
-	      // isLeaf 字段是在 bigData 里添加的，只有层级树大数据场景需要该字段
-	      // isLeaf 有三种取值情况：true / false / null。（Table内部字段）
-	      var isLeaf = typeof record['isLeaf'] === 'boolean' ? record['isLeaf'] : null;
-	      var childrenColumn = isLeaf ? false : record[childrenColumnName];
+	      record['_isLeaf'] = typeof record['isleaf'] === 'boolean' ? record['isleaf'] : record['_isLeaf'];
+	      // _isLeaf 字段是在 bigData 里添加的，只有层级树大数据场景需要该字段
+	      // _isLeaf 有三种取值情况：true / false / null。（Table内部字段）
+	      var _isLeaf = typeof record['_isLeaf'] === 'boolean' ? record['_isLeaf'] : null;
+	      var childrenColumn = _isLeaf ? false : record[childrenColumnName];
 	      var isRowExpanded = this.isRowExpanded(record, i);
 	      var expandedRowContent = void 0;
 	      var expandedContentHeight = 0;
@@ -41399,7 +41451,7 @@
 	        visible: visible,
 	        expandRowByClick: expandRowByClick,
 	        onExpand: this.onExpanded,
-	        expandable: expandedRowRender || (childrenColumn && childrenColumn.length > 0 ? true : isLeaf === false),
+	        expandable: expandedRowRender || (childrenColumn && childrenColumn.length > 0 ? true : _isLeaf === false),
 	        expanded: isRowExpanded,
 	        clsPrefix: props.clsPrefix + '-row',
 	        childrenColumnName: childrenColumnName,
@@ -43168,13 +43220,13 @@
 	        var key = node.key,
 	            title = node.title,
 	            children = node.children,
-	            isLeaf = node.isLeaf,
-	            otherProps = _objectWithoutProperties(node, ['key', 'title', 'children', 'isLeaf']);
+	            _isLeaf = node._isLeaf,
+	            otherProps = _objectWithoutProperties(node, ['key', 'title', 'children', '_isLeaf']);
 	
 	        var obj = {
 	          key: key,
 	          title: title,
-	          isLeaf: isLeaf,
+	          _isLeaf: _isLeaf,
 	          children: []
 	        };
 	        tree.push(_extends(obj, _extends({}, otherProps)));
@@ -43194,7 +43246,7 @@
 	
 	      var obj = {
 	        key: item[attr.id],
-	        isLeaf: item[attr.isLeaf],
+	        _isLeaf: item[attr._isLeaf],
 	        children: []
 	      };
 	      tree.push(_extends(obj, _extends({}, otherProps)));
@@ -43220,7 +43272,7 @@
 	
 	            var _obj = {
 	              key: _item[attr.id],
-	              isLeaf: _item[attr.isLeaf],
+	              _isLeaf: _item[attr._isLeaf],
 	              children: []
 	            };
 	            treeArrs[_i].children.push(_extends(_obj, _extends({}, _otherProps)));
@@ -44078,19 +44130,22 @@
 	      className += ' u-table-inline-icon';
 	    }
 	    return _react2["default"].createElement(
-	      'td',
-	      {
-	        colSpan: colSpan,
-	        rowSpan: rowSpan,
-	        className: className,
-	        onClick: this.handleClick,
-	        title: title,
-	        style: _extends({ maxWidth: column.width, color: fontColor, backgroundColor: bgColor }, column.style)
-	      },
-	      indentText,
-	      expandIcon,
-	      text,
-	      colMenu
+	      _react.Fragment,
+	      null,
+	      colSpan == 0 ? null : _react2["default"].createElement(
+	        'td',
+	        {
+	          colSpan: colSpan,
+	          rowSpan: rowSpan,
+	          className: className,
+	          onClick: this.handleClick,
+	          title: title,
+	          style: _extends({ maxWidth: column.width, color: fontColor, backgroundColor: bgColor }, column.style) },
+	        indentText,
+	        expandIcon,
+	        text,
+	        colMenu
+	      )
 	    );
 	  };
 	
@@ -44427,20 +44482,20 @@
 	    "bool_true": "是",
 	    "bool_false": "否",
 	    'en-us': {
-	        'resetSettings': 'reset settings',
-	        'include': 'include',
-	        'exclusive': 'exclusive',
-	        'equal': 'equal',
-	        'unequal': 'unequal',
-	        'begin': 'begin',
-	        'end': 'end',
-	        'greater_than': 'greater than',
-	        'great_than_equal_to': 'great than equal to',
-	        'less_than': 'less than',
-	        'less_than_equal_to': 'less than equal to',
-	        'be_equal_to': 'be equal to',
-	        'not_equal_to': 'not equal to',
-	        "no_data": 'no data',
+	        'resetSettings': 'Reset',
+	        'include': 'Include',
+	        'exclusive': 'Not include',
+	        'equal': 'Equal to',
+	        'unequal': 'Not equal to',
+	        'begin': 'Begin with',
+	        'end': 'End with',
+	        'greater_than': 'Greater than',
+	        'great_than_equal_to': 'Greater than or equal to',
+	        'less_than': 'Less than',
+	        'less_than_equal_to': 'Less than or equal to',
+	        'be_equal_to': 'Equal to',
+	        'not_equal_to': 'Not equal to',
+	        "no_data": 'No data',
 	        "bool_true": "true",
 	        "bool_false": "false"
 	    },
@@ -76917,7 +76972,7 @@
 	    }
 	
 	    // 不合法直接退出
-	    var parsed = (0, _moment2["default"])(str, format, true);
+	    var parsed = (0, _moment2["default"])(str);
 	    if (!parsed.isValid()) {
 	      _this2.setState({
 	        // invalid: true,
@@ -76968,7 +77023,7 @@
 	    }
 	
 	    // 不合法直接退出
-	    var parsed = (0, _moment2["default"])(str, format, true);
+	    var parsed = (0, _moment2["default"])(str);
 	    if (!parsed.isValid()) {
 	      _this2.setState({
 	        invalid: true
@@ -77010,7 +77065,7 @@
 	        isRange = _props3.isRange;
 	
 	    var str = e.target.value;
-	    var parsed = (0, _moment2["default"])(str, format, true);
+	    var parsed = (0, _moment2["default"])(str);
 	    if (e.keyCode === _tinperBeeCore.KeyCode.ENTER) {
 	      if (parsed.isValid() && onSelect) {
 	        isRange ? onSelect(parsed.clone()) : onSelect(value.clone()); //FIX https://github.com/iuap-design/tinper-bee/issues/183
@@ -78360,7 +78415,8 @@
 	  placement: _propTypes2["default"].any,
 	  value: _propTypes2["default"].oneOfType([_propTypes2["default"].object, _propTypes2["default"].array]),
 	  defaultValue: _propTypes2["default"].oneOfType([_propTypes2["default"].object, _propTypes2["default"].array]),
-	  align: _propTypes2["default"].object
+	  align: _propTypes2["default"].object,
+	  enterKeyDown: _propTypes2["default"].bool //enter 键是否打开日期面板
 	};
 	Picker.defaultProps = {
 	  prefixCls: 'rc-calendar-picker',
@@ -78369,7 +78425,8 @@
 	  placement: 'bottomLeft',
 	  defaultOpen: false,
 	  onChange: noop,
-	  onOpenChange: noop
+	  onOpenChange: noop,
+	  enterKeyDown: true
 	};
 	
 	var _initialiseProps = function _initialiseProps() {
@@ -78399,8 +78456,10 @@
 	  };
 	
 	  this.onKeyDown = function (event) {
-	    if (!_this2.state.open && (event.keyCode === _KeyCode2["default"].DOWN || event.keyCode === _KeyCode2["default"].ENTER)) {
-	      _this2.open();
+	    var enterKeyDown = _this2.props.enterKeyDown;
+	
+	    if (event.keyCode === _KeyCode2["default"].DOWN || enterKeyDown && event.keyCode === _KeyCode2["default"].ENTER) {
+	      if (!_this2.state.open) _this2.open();
 	      event.preventDefault();
 	    }
 	    _this2.props.onKeyDown && _this2.props.onKeyDown(event);
@@ -88741,6 +88800,12 @@
 	    InputNumber.prototype.ComponentWillUnMount = function ComponentWillUnMount() {
 	        this.clear();
 	    };
+	
+	    /**
+	     *  @memberof InputNumber
+	     * type 是否要四舍五入(此参数无效,超长不让输入)
+	     */
+	
 	    /**
 	     * 设置增加减少按钮是否可用
 	     */
@@ -88809,9 +88874,7 @@
 	                _react2["default"].createElement(
 	                    _beeInputGroup2["default"].Addon,
 	                    {
-	                        onClick: function onClick() {
-	                            minusDisabled ? '' : _this2.handleBtnClick('down');
-	                        },
+	                        // onClick={()=>{minusDisabled?'':this.handleBtnClick('down')}}
 	                        className: (minusDisabled && 'disabled') + disabledCursor,
 	                        onMouseDown: this.handleReduceMouseDown,
 	                        onMouseLeave: this.clear,
@@ -88831,9 +88894,7 @@
 	                _react2["default"].createElement(
 	                    _beeInputGroup2["default"].Addon,
 	                    {
-	                        onClick: function onClick() {
-	                            plusDisabled ? '' : _this2.handleBtnClick('up');
-	                        },
+	                        // onClick={()=>{plusDisabled?'':this.handleBtnClick('up')}}
 	                        className: (plusDisabled && 'disabled') + disabledCursor,
 	                        onMouseDown: this.handlePlusMouseDown,
 	                        onMouseLeave: this.clear,
@@ -88865,9 +88926,7 @@
 	                        _react2["default"].createElement(
 	                            'span',
 	                            {
-	                                onClick: function onClick() {
-	                                    plusDisabled ? '' : _this2.handleBtnClick('up');
-	                                },
+	                                // onClick={()=>{plusDisabled?'':this.handleBtnClick('up')}}
 	                                onMouseDown: this.handlePlusMouseDown,
 	                                onMouseLeave: this.clear,
 	                                onMouseUp: this.clear,
@@ -88877,9 +88936,7 @@
 	                        _react2["default"].createElement(
 	                            'span',
 	                            {
-	                                onClick: function onClick() {
-	                                    minusDisabled ? '' : _this2.handleBtnClick('down');
-	                                },
+	                                // onClick={()=> minusDisabled?'':this.handleBtnClick('down')}
 	                                onMouseDown: this.handleReduceMouseDown,
 	                                onMouseLeave: this.clear,
 	                                onMouseUp: this.clear,
@@ -88995,6 +89052,21 @@
 	        };
 	    };
 	
+	    this.numToFixed = function (value, fixed, type) {
+	        value = String(value);
+	        if (!value && value !== "0") return value;
+	        if (!fixed && String(fixed) !== "0") return value;
+	        var preIndex = value.indexOf(".");
+	        if (value.indexOf(".") === -1) return value;
+	        preIndex++;
+	        var endIndex = preIndex + fixed;
+	        var precValue = value.substr(preIndex, endIndex) + "0000000000";
+	        if (type) {
+	            return Number(value).toFixed(fixed);
+	        }
+	        return value.split(".")[0] + "." + precValue.substr(0, fixed);
+	    };
+	
 	    this.handleChange = function (value) {
 	        var selectionStart = _this3.input.selectionStart == undefined ? _this3.input.input.selectionStart : _this3.input.selectionStart;
 	        _this3.selectionStart = selectionStart;
@@ -89014,12 +89086,12 @@
 	        // value = this.unThousands(value);
 	        if (minusRight) {
 	            if (value.match(/-/g) && value.match(/-/g).length > 1) return;
-	        } else {
-	            if (isNaN(value) && value !== '.' && value !== '-') return;
 	        }
+	        if (isNaN(value) && value !== '.' && value !== '-') return;
 	        if (value.indexOf(".") !== -1) {
 	            //小数最大值处理
 	            var prec = String(value.split(".")[1]).replace("-", "");
+	            if (_this3.props.precision === 0 && (prec === "" || prec != "")) return;
 	            if (_this3.props.precision && prec.length > _this3.props.precision) return;
 	            if (prec.length > 8) return;
 	        }
@@ -89078,13 +89150,13 @@
 	            max = _props4.max,
 	            min = _props4.min,
 	            displayCheckPrompt = _props4.displayCheckPrompt,
-	            minusRight = _props4.minusRight;
+	            minusRight = _props4.minusRight,
+	            round = _props4.round;
 	
 	        var local = (0, _tool.getComponentLocale)(_this3.props, _this3.context, 'InputNumber', function () {
 	            return _i18n2["default"];
 	        });
-	        // v = this.state.value;//在onBlur的时候不需要活输入框的只，而是要获取state中的值，因为有format的时候就会有问题。
-	        v = _this3.state.value === "-" ? "" : _this3.state.value;
+	        v = _this3.state.value; //在onBlur的时候不需要活输入框的只，而是要获取state中的值，因为有format的时候就会有问题。
 	        if (v === '' || !v) {
 	            _this3.setState({
 	                value: v
@@ -89093,8 +89165,8 @@
 	            onBlur && onBlur(v, e);
 	            return;
 	        }
-	        // let value = this.unThousands(v);
-	        var value = v;
+	        // let value = this.unThousands(v); 
+	        var value = _this3.numToFixed(v, precision, round);
 	        if (minusRight) {
 	            if (value.indexOf('-') != -1) {
 	                //所有位置的负号转到前边
@@ -89193,6 +89265,7 @@
 	            showValue: toThousands(value)
 	        });
 	        toNumber ? onChange && onChange(Number(value)) : onChange && onChange(value);
+	        _this3.handleBtnClick('down', value);
 	        _this3.detailDisable(value);
 	    };
 	
@@ -89225,6 +89298,7 @@
 	            showValue: toThousands(value)
 	        });
 	        toNumber ? onChange && onChange(Number(value)) : onChange && onChange(value);
+	        _this3.handleBtnClick('up', value);
 	        _this3.detailDisable(value);
 	    };
 	
@@ -89268,7 +89342,7 @@
 	    };
 	
 	    this.handlePlusMouseDown = function (e) {
-	        e.preventDefault();
+	        e.preventDefault && e.preventDefault();
 	        var _props8 = _this3.props,
 	            delay = _props8.delay,
 	            disabled = _props8.disabled;
@@ -89278,12 +89352,12 @@
 	        _this3.plus(value);
 	        _this3.clear();
 	        _this3.timer = setTimeout(function () {
-	            _this3.handlePlusMouseDown();
+	            _this3.handlePlusMouseDown(e);
 	        }, delay);
 	    };
 	
 	    this.handleReduceMouseDown = function (e) {
-	        e.preventDefault();
+	        e.preventDefault && e.preventDefault();
 	        var _props9 = _this3.props,
 	            delay = _props9.delay,
 	            disabled = _props9.disabled;
@@ -89302,6 +89376,7 @@
 	        value = String(value);
 	        var precision = _this3.props.precision;
 	
+	        if (precision === 0) return value;
 	        if (precision == undefined || value.indexOf(".") !== -1 && String(value.split(".")[1]).length === precision) {
 	            return value;
 	        }
@@ -89311,11 +89386,17 @@
 	        before = before === "-" ? before : "";
 	        after = after === "-" ? after : "";
 	        value = value.replace("-", '');
+	        var precV = "000000000000";
+	        if (value.indexOf(".") === -1) {
+	            precV = precV.substr(0, precision);
+	            precV = precV ? "." + precV : precV;
+	            value = value + precV;
+	        }
 	        return before + Number(value).toFixed(precision) + after;
 	    };
 	
-	    this.handleBtnClick = function (type) {
-	        _this3.props.handleBtnClick(type, _this3.state.value);
+	    this.handleBtnClick = function (type, value) {
+	        _this3.props.handleBtnClick(type, value);
 	    };
 	};
 	
@@ -89340,8 +89421,8 @@
 	    'msgMax': '值不能大于最大值',
 	    'msgMin': '值不能小于最小值',
 	    'en-us': {
-	        'msgMax': 'value cannot be greater than the maximum',
-	        'msgMin': 'value cannot be less than minimum'
+	        'msgMax': 'Cannot be greater than the Max value',
+	        'msgMin': 'Cannot be less than the Min value'
 	    },
 	    'zh-tw': {
 	        'msgMax': '值不能大於最大值',
@@ -89859,6 +89940,9 @@
 	    filterDropdownType: 'string'
 	};
 	
+	FilterDropDown.contextTypes = {
+	    beeLocale: _propTypes2["default"].object
+	};
 	exports["default"] = FilterDropDown;
 	module.exports = exports['default'];
 
@@ -90729,6 +90813,8 @@
 	
 	function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
 	
+	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -90742,10 +90828,11 @@
 	    addToBtns: _propTypes2["default"].object, //所有的按钮，支持扩展
 	    powerBtns: _propTypes2["default"].array, // 按钮权限 code数组
 	    btns: _propTypes2["default"].object, // 按钮对象数组
-	    type: _propTypes2["default"].oneOfType(['button', 'line']),
+	    type: _propTypes2["default"].oneOfType(['button', 'line', 'icon']),
 	    maxSize: _propTypes2["default"].number,
 	    forcePowerBtns: _propTypes2["default"].array, //不受权限控制的按钮code数组
-	    localeCookie: _propTypes2["default"].string //当前语种的cookie key值
+	    localeCookie: _propTypes2["default"].string, //当前语种的cookie key值
+	    iconTypes: _propTypes2["default"].object
 	};
 	var defaultProps = {
 	    addToBtns: {},
@@ -90754,7 +90841,12 @@
 	    maxSize: 2,
 	    forcePowerBtns: ['cancel', 'search', 'clear', 'empty'], //取消、查询、清空、置空不受权限管理控制
 	    localeCookie: 'locale',
-	    onClick: function onClick() {}
+	    onClick: function onClick() {},
+	    iconTypes: { //默认code对应的图标
+	        add: 'uf-add-c-o',
+	        update: 'uf-pencil',
+	        "delete": 'uf-del'
+	    }
 	};
 	
 	var getCookie = function getCookie(name) {
@@ -90813,7 +90905,7 @@
 	                });
 	            }
 	
-	            if (type == 'line') {
+	            if (type == 'line' || type == 'icon') {
 	                if (btnArray.length > maxSize) {
 	                    var menusList = _react2["default"].createElement(
 	                        _beeMenus2["default"],
@@ -90941,7 +91033,7 @@
 	                                    name
 	                                );
 	                        }
-	                    } else {
+	                    } else if (_this.props.type == 'line') {
 	                        switch (key) {
 	                            case 'search':
 	                                return _react2["default"].createElement(
@@ -90974,6 +91066,16 @@
 	                                    name
 	                                );
 	                        }
+	                    } else if (_this.props.type == 'icon') {
+	                        var iconType = itemProps.iconType,
+	                            other = _objectWithoutProperties(itemProps, ['iconType']);
+	
+	                        iconType = iconType ? iconType : _this.props.iconTypes[key];
+	                        return _react2["default"].createElement(
+	                            'span',
+	                            _extends({ key: key }, other, { colors: colors, className: clss + ' icon', title: name }),
+	                            _react2["default"].createElement(_beeIcon2["default"], { type: iconType })
+	                        );
 	                    }
 	                }
 	            } else {
@@ -91115,7 +91217,7 @@
 	        'colors': 'write',
 	        'name_zh_CN': '修改',
 	        'name_zh_TW': '修改',
-	        'name_en_US': 'Modify',
+	        'name_en_US': 'update',
 	        'hotkey': '',
 	        'className': 'ac-btns-update'
 	    },
@@ -91158,6 +91260,14 @@
 	        'name_en_US': 'Appoint',
 	        'hotkey': '',
 	        'className': 'ac-btns-appoint'
+	    },
+	    'send': { //发送
+	        'colors': 'write',
+	        'name_zh_CN': '发送',
+	        'name_zh_TW': '發送',
+	        'name_en_US': 'Send',
+	        'hotkey': '',
+	        'className': 'ac-btns-send'
 	    },
 	    'printpreview': { //打印预览
 	        'colors': 'write',
@@ -91235,6 +91345,13 @@
 	        'name_zh_TW': '粘貼至末行',
 	        'name_en_US': 'Paste to end line',
 	        'className': 'ac-btns-copyToEnd'
+	    },
+	    'copyToHere': { //粘贴至此处
+	        'colors': 'write',
+	        'name_zh_CN': '粘贴至此处',
+	        'name_zh_TW': '粘貼至此處',
+	        'name_en_US': 'Paste here',
+	        'className': 'ac-btns-copyToHere'
 	    },
 	    'organizationChat': { //机构图
 	        'colors': 'write',
