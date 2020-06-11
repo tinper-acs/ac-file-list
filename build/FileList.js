@@ -262,29 +262,6 @@ var FileList = function (_Component) {
             });
         };
 
-        _this.batchDelete = function (params) {
-            var url = _this.props.url.batchDelete;
-            (0, _axios2["default"])(url, {
-                method: "delete",
-                params: params,
-                withCredentials: true
-            }).then(function (res) {
-                console.log(res);
-                if (res.status == 200) {
-                    _this.props.callback('success', 'batchDelete', res);
-                    console.log(_this.localObj['delSuccess']);
-                } else {
-                    _this.props.callback('error', 'batchDelete', res);
-                }
-            })["catch"](function (error) {
-                _this.setState({
-                    show: false
-                });
-                _this.props.callback('error', 'delete', error);
-                console.error(error);
-            });
-        };
-
         _this.download = function () {
             if (!_this._handelBeforeAct('download')) return;
             var url = _this.props.url.info.replace('{id}', _this.state.hoverData.id);
@@ -347,6 +324,7 @@ var FileList = function (_Component) {
                     fileName: nameAry.splice(0, nameAry.length - 1).join('.'),
                     fileSizeText: (0, _utils.getSize)(fileInfo.size),
                     uid: fileInfo.uid,
+                    ctime: new Date(),
                     userName: decodeURIComponent((0, _utils.getCookie)('yonyou_uname')),
                     uploadStatus: 'uploading'
                 };
@@ -434,8 +412,6 @@ var FileList = function (_Component) {
                         _react2["default"].createElement(_beeIcon2["default"], { type: 'uf-exc-c' }),
                         record.errorMsg || _this.localObj.uploadError
                     );
-                } else if (record.uploadStatus == 'done') {
-                    return (0, _utils.dateFormate)(new Date(), 'yyyy-MM-dd hh:mm');
                 } else {
                     return (0, _utils.dateFormate)(new Date(text), 'yyyy-MM-dd hh:mm');
                 }
@@ -545,8 +521,6 @@ var FileList = function (_Component) {
 
 
     /**删除 */
-
-    /*批量删除*/
 
 
     // pageIndexChange=(pageNo)=>{

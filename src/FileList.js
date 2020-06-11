@@ -114,8 +114,6 @@ class FileList extends Component {
                         return <span className='upload-status uploading'> <Icon type='uf-loadingstate'/> {this.localObj.uploading} </span>
                     }else if(record.uploadStatus=='error'){
                         return <span className='upload-status error' title={record.errorMsg||this.localObj.uploadError}> <Icon type='uf-exc-c'/>{record.errorMsg||this.localObj.uploadError}</span>
-                    }else if(record.uploadStatus=='done'){
-                        return dateFormate(new Date(),'yyyy-MM-dd hh:mm')
                     }else{
                         return dateFormate(new Date(text),'yyyy-MM-dd hh:mm')
                     }
@@ -424,6 +422,7 @@ class FileList extends Component {
                 fileName:nameAry.splice(0,nameAry.length-1).join('.'),
                 fileSizeText:getSize(fileInfo.size),
                 uid:fileInfo.uid,
+                ctime:new Date(),
                 userName:decodeURIComponent(getCookie('yonyou_uname')),
                 uploadStatus:'uploading'
             }

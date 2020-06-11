@@ -1,3 +1,13 @@
+<a name="0.2.8"></a>
+## [0.2.8](https://github.com/tinper-acs/ac-file-list/compare/v0.2.6...v0.2.8) (2020-06-11)
+
+
+### Features
+
+* 使用新改造的attachment组件 ([d15bcfe](https://github.com/tinper-acs/ac-file-list/commit/d15bcfe))
+
+
+
 <a name="0.2.6"></a>
 ## [0.2.6](https://github.com/tinper-acs/ac-file-list/compare/v0.2.5...v0.2.6) (2020-03-13)
 
