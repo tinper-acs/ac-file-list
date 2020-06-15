@@ -255,7 +255,7 @@ class FileList extends Component {
                             list=afterGetList(list)
                         }
                         this.setState({
-                            data:list.reverse(),
+                            data:list,
                             pageSize:params.pageSize,
                             pageNo:params.pageNo
                         })
@@ -404,18 +404,19 @@ class FileList extends Component {
 
         }
         if (info.file.status === 'done') {
-            let id = info.file.response.data[0].id;
-            data.forEach(item=>{
-                if(item.uid==info.file.uid){
-                    item.uploadStatus='done';
-                    item.id=id
-                }
-            });
-            this.setState({
-                data
-            })
+            // let id = info.file.response.data[0].id;
+            // data.forEach(item=>{
+            //     if(item.uid==info.file.uid){
+            //         item.uploadStatus='done';
+            //         item.id=id
+            //     }
+            // });
+            // this.setState({
+            //     data
+            // })
             this.props.callback('success','upload',info.file.response);
             console.log(this.localObj['uploadSuccess'])
+            this.getList()
         }
         if (info.file.status === 'removed') {
             let msg = info.file.response.displayMessage[getCookie(this.props.localeCookie)]||info.file.response.displayMessage['zh_CN']
