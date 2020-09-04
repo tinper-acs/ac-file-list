@@ -419,7 +419,9 @@ class FileList extends Component {
             this.getList()
         }
         if (info.file.status === 'removed') {
-            let msg = info.file.response.displayMessage[getCookie(this.props.localeCookie)]||info.file.response.displayMessage['zh_CN']
+            const response = info.file.response;
+            const local =  getCookie(this.props.localeCookie) || 'zh_CN' ;
+            let msg = response && response.displayMessage ? response.displayMessage[local] : '上传出错';
             console.error(`${info.file.name} ${this.localObj['uploadError']}`);
             this.props.callback('error','upload',info.file.response);
             data.forEach(item=>{
