@@ -320,7 +320,9 @@ var FileList = function (_Component) {
                 _this.getList();
             }
             if (info.file.status === 'removed') {
-                var msg = info.file.response.displayMessage[(0, _utils.getCookie)(_this.props.localeCookie)] || info.file.response.displayMessage['zh_CN'];
+                var response = info.file.response;
+                var local = (0, _utils.getCookie)(_this.props.localeCookie) || 'zh_CN';
+                var msg = response && response.displayMessage ? response.displayMessage[local] : '上传出错';
                 console.error(info.file.name + ' ' + _this.localObj['uploadError']);
                 _this.props.callback('error', 'upload', info.file.response);
                 data.forEach(function (item) {
