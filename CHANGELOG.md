@@ -1,5 +1,40 @@
-<a name="0.2.10"></a>
-## [0.2.10](https://github.com/tinper-acs/ac-file-list/compare/v0.2.8...v0.2.10) (2020-05-13)
+<a name="1.0.8"></a>
+## [1.0.8](https://github.com/tinper-acs/ac-file-list/compare/v1.0.6...v1.0.8) (2020-10-27)
+
+
+### Bug Fixes
+
+* 修改版本号 ([fa720b4](https://github.com/tinper-acs/ac-file-list/commit/fa720b4))
+
+
+
+<a name="1.0.6"></a>
+## [1.0.6](https://github.com/tinper-acs/ac-file-list/compare/v1.0.4...v1.0.6) (2020-09-04)
+
+
+### Bug Fixes
+
+* 上传出错，兼容性判断错误信息 ([f37ba22](https://github.com/tinper-acs/ac-file-list/commit/f37ba22))
+
+
+
+<a name="1.0.4"></a>
+## [1.0.4](https://github.com/tinper-acs/ac-file-list/compare/v1.0.3...v1.0.4) (2020-08-15)
+
+
+### Features
+
+* 字体大小统一为12px ([c391048](https://github.com/tinper-acs/ac-file-list/commit/c391048))
+
+
+
+<a name="1.0.3"></a>
+## [1.0.3](https://github.com/tinper-acs/ac-file-list/compare/v1.0.1...v1.0.3) (2020-06-15)
+
+
+
+<a name="1.0.1"></a>
+## [1.0.1](https://github.com/tinper-acs/ac-file-list/compare/v0.2.8...v1.0.1) (2020-05-27)
 
 
 ### Bug Fixes
@@ -10,6 +45,7 @@
 ### Features
 
 * **ac-file-list:** title属性 ([a753c12](https://github.com/tinper-acs/ac-file-list/commit/a753c12))
+* 新增加一些按钮扩展能力 ([3f817f7](https://github.com/tinper-acs/ac-file-list/commit/3f817f7))
 
 
 

@@ -370,7 +370,7 @@ var FileList = function (_Component) {
             pageSize: 999999,
             hoverData: {},
             id: props.id,
-            open: true,
+            open: typeof props.open == 'boolean' ? props.open : true,
             reload: Math.random()
         };
         _this.hoverData = {};
