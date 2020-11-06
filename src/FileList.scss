@@ -265,6 +265,9 @@ $font-size: 12px;
                     }
                     .file-list-linetoolbar-container {
                         display: block;
+                        &>div {
+                            justify-content: flex-start;
+                        }
                     }
                 }
             }
