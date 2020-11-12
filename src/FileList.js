@@ -163,7 +163,7 @@ class FileList extends Component {
                                             onClick: ()=>{this.deleteError(record.uid)}
                                         },
                                     }}
-                                    powerBtns={props.powerBtns}
+                                    powerBtns={this.props.powerBtns}
                             />
                         </div>
                     }else if(record.uploadStatus=='uploading'){
@@ -171,8 +171,8 @@ class FileList extends Component {
                     }else{
                         return <div className="opt-btns">
                             {this.props.type =='mdf' ?
-                                <div className="file-list-linetoolbar-container">{React.cloneElement(props.lineToolbar, { record })}</div>
-                                : <Btns localeCookie={props.localeCookie}
+                                <div className="file-list-linetoolbar-container">{React.cloneElement(this.props.lineToolbar, { record })}</div>
+                                : <Btns localeCookie={this.props.localeCookie}
                                         type='line'
                                         btns={{
                                             download: {
@@ -182,7 +182,7 @@ class FileList extends Component {
                                                 onClick: this.deleteConfirm
                                             },
                                         }}
-                                        powerBtns={props.powerBtns}
+                                        powerBtns={this.props.powerBtns}
                             />}
 
 

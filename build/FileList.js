@@ -479,7 +479,7 @@ var FileList = function (_Component) {
                                         }
                                     }
                                 }
-                            }, 'powerBtns', props.powerBtns))
+                            }, 'powerBtns', _this.props.powerBtns))
                         );
                     } else if (record.uploadStatus == 'uploading') {
                         return _react2["default"].createElement('div', { className: 'opt-btns' });
@@ -490,8 +490,8 @@ var FileList = function (_Component) {
                             _this.props.type == 'mdf' ? _react2["default"].createElement(
                                 'div',
                                 { className: 'file-list-linetoolbar-container' },
-                                _react2["default"].cloneElement(props.lineToolbar, { record: record })
-                            ) : _react2["default"].createElement(_acBtns2["default"], { localeCookie: props.localeCookie,
+                                _react2["default"].cloneElement(_this.props.lineToolbar, { record: record })
+                            ) : _react2["default"].createElement(_acBtns2["default"], { localeCookie: _this.props.localeCookie,
                                 type: 'line',
                                 btns: {
                                     download: {
@@ -501,7 +501,7 @@ var FileList = function (_Component) {
                                         onClick: _this.deleteConfirm
                                     }
                                 },
-                                powerBtns: props.powerBtns
+                                powerBtns: _this.props.powerBtns
                             })
                         );
                     }
