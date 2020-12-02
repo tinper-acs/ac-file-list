@@ -61,6 +61,9 @@ const defaultProps = {
 class FileList extends Component {
     constructor(props){
         super(props);
+        if(this.props.type =='mdf' && window.cb && cb.utils && cb.utils.loadingControl){
+            this.mdfLoading = cb.utils.loadingControl;
+        }
         this.state = {
             data:[],
             selectedList:[],
@@ -70,7 +73,7 @@ class FileList extends Component {
             hoverData:{},
             id:props.id,
             open:typeof props.open=='boolean' ? props.open : true,
-            reload: Math.random()
+            reload: Math.random(),
         }
         this.hoverData={};
         this.localObj = i18n[getCookie(props.localeCookie)]||i18n['zh_CN'];
@@ -237,6 +240,7 @@ class FileList extends Component {
         let {afterGetList} =this.props;
         if(!this._handelBeforeAct('list')) return;
         if(id){
+            this.mdfLoading && this.mdfLoading.start();
             let url = this.props.url.list.replace('{id}',id)
             let params=Object.assign({
                 pageSize:this.state.pageSize,
@@ -261,10 +265,14 @@ class FileList extends Component {
                         })
                     }
                     this.props.callback('success','list',res);
+                    this.mdfLoading && this.mdfLoading.end();
                 }else{
                     this.props.callback('error','list',res);
+                    this.mdfLoading && this.mdfLoading.end();
                 }
             }).catch(error=>{
+                this.mdfLoading && this.mdfLoading.end();
+
                 this.props.callback('error','list',error);
                 console.error(error)
             })
@@ -343,11 +351,31 @@ class FileList extends Component {
         const {vitualDelete}=this.props;
         if(!this._handelBeforeAct('delete')) return;
         if(vitualDelete && !vitualDelete(this.state.hoverData,this)) return; //本地删除
+        if(this.mdfLoading){
+            this.mdfLoading.start();
+        }
+        let rowId=this.state.hoverData.id
+        if(!rowId){
+            const data = this.state.data;
+            const uid = this.state.hoverData.uid;
+            const selectedRow = data.find(item=>item.uid == uid);
+            if(selectedRow){
+                rowId = selectedRow.id;
+            }
+        }
+        if(!rowId){
+            this.props.callback('error','delete','缺少行id');
+            this.mdfLoading && this.mdfLoading.end();
+            return
+        }
         let url = this.props.url.delete.replace('{id}',this.state.hoverData.id);
         request(url, {
             method: "delete",
             withCredentials:true
         }).then((res)=>{
+            if(this.mdfLoading){
+                this.mdfLoading.end();
+            }
             if(res.status==200){
                 this.props.callback('success','delete',res);
                 console.log(this.localObj['delSuccess']);
@@ -356,14 +384,16 @@ class FileList extends Component {
                     show:false
                 })
             }else{
-                this.props.callback('error','delete',res);
+                this.props.callback('error','delete',null,res);
             }
         }).catch(error=>{
+            if(this.mdfLoading){
+                this.mdfLoading.end();
+            }
             this.setState({
                 show:false
             })
-            this.props.callback('error','delete',error);
-            console.error(error);
+            this.props.callback('error','delete',null,error);
         })
     }
     download=()=>{
@@ -432,7 +462,7 @@ class FileList extends Component {
             });
             this.setState({
                 data
-            })
+            });
         }
     }
     beforeUpload=(file,fileList)=>{

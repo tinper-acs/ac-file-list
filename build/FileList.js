@@ -150,6 +150,7 @@ var FileList = function (_Component) {
 
             if (!_this._handelBeforeAct('list')) return;
             if (id) {
+                _this.mdfLoading && _this.mdfLoading.start();
                 var url = _this.props.url.list.replace('{id}', id);
                 var params = _extends({
                     pageSize: _this.state.pageSize,
@@ -174,10 +175,14 @@ var FileList = function (_Component) {
                             });
                         }
                         _this.props.callback('success', 'list', res);
+                        _this.mdfLoading && _this.mdfLoading.end();
                     } else {
                         _this.props.callback('error', 'list', res);
+                        _this.mdfLoading && _this.mdfLoading.end();
                     }
                 })["catch"](function (error) {
+                    _this.mdfLoading && _this.mdfLoading.end();
+
                     _this.props.callback('error', 'list', error);
                     console.error(error);
                 });
@@ -257,11 +262,33 @@ var FileList = function (_Component) {
 
             if (!_this._handelBeforeAct('delete')) return;
             if (vitualDelete && !vitualDelete(_this.state.hoverData, _this)) return; //本地删除
+            if (_this.mdfLoading) {
+                _this.mdfLoading.start();
+            }
+            var rowId = _this.state.hoverData.id;
+            if (!rowId) {
+                var data = _this.state.data;
+                var uid = _this.state.hoverData.uid;
+                var selectedRow = data.find(function (item) {
+                    return item.uid == uid;
+                });
+                if (selectedRow) {
+                    rowId = selectedRow.id;
+                }
+            }
+            if (!rowId) {
+                _this.props.callback('error', 'delete', '缺少行id');
+                _this.mdfLoading && _this.mdfLoading.end();
+                return;
+            }
             var url = _this.props.url["delete"].replace('{id}', _this.state.hoverData.id);
             (0, _axios2["default"])(url, {
                 method: "delete",
                 withCredentials: true
             }).then(function (res) {
+                if (_this.mdfLoading) {
+                    _this.mdfLoading.end();
+                }
                 if (res.status == 200) {
                     _this.props.callback('success', 'delete', res);
                     console.log(_this.localObj['delSuccess']);
@@ -270,14 +297,16 @@ var FileList = function (_Component) {
                         show: false
                     });
                 } else {
-                    _this.props.callback('error', 'delete', res);
+                    _this.props.callback('error', 'delete', null, res);
                 }
             })["catch"](function (error) {
+                if (_this.mdfLoading) {
+                    _this.mdfLoading.end();
+                }
                 _this.setState({
                     show: false
                 });
-                _this.props.callback('error', 'delete', error);
-                console.error(error);
+                _this.props.callback('error', 'delete', null, error);
             });
         };
 
@@ -362,6 +391,9 @@ var FileList = function (_Component) {
             });
         };
 
+        if (_this.props.type == 'mdf' && window.cb && cb.utils && cb.utils.loadingControl) {
+            _this.mdfLoading = cb.utils.loadingControl;
+        }
         _this.state = {
             data: [],
             selectedList: [],
