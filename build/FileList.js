@@ -177,13 +177,13 @@ var FileList = function (_Component) {
                         _this.props.callback('success', 'list', res);
                         _this.mdfLoading && _this.mdfLoading.end();
                     } else {
-                        _this.props.callback('error', 'list', res);
+                        _this.props.callback('error', 'list', null, res);
                         _this.mdfLoading && _this.mdfLoading.end();
                     }
                 })["catch"](function (error) {
                     _this.mdfLoading && _this.mdfLoading.end();
 
-                    _this.props.callback('error', 'list', error);
+                    _this.props.callback('error', 'list', null, error);
                     console.error(error);
                 });
             }
@@ -277,7 +277,7 @@ var FileList = function (_Component) {
                 }
             }
             if (!rowId) {
-                _this.props.callback('error', 'delete', '缺少行id');
+                _this.props.callback('error', 'delete', null, '缺少行id');
                 _this.mdfLoading && _this.mdfLoading.end();
                 return;
             }
@@ -322,10 +322,10 @@ var FileList = function (_Component) {
                     _this.props.callback('success', 'download', res);
                     console.log(_this.localObj['downloadSuccess']);
                 } else {
-                    _this.props.callback('error', 'download', res);
+                    _this.props.callback('error', 'download', null, res);
                 }
             })["catch"](function (error) {
-                _this.props.callback('error', 'download', error);
+                _this.props.callback('error', 'download', null, error);
                 console.error(error);
             });
         };
@@ -353,7 +353,7 @@ var FileList = function (_Component) {
                 var local = (0, _utils.getCookie)(_this.props.localeCookie) || 'zh_CN';
                 var msg = response && response.displayMessage ? response.displayMessage[local] : '上传出错';
                 console.error(info.file.name + ' ' + _this.localObj['uploadError']);
-                _this.props.callback('error', 'upload', info.file.response);
+                _this.props.callback('error', 'upload', null, info.file.response);
                 data.forEach(function (item) {
                     if (item.uid == info.file.uid) {
                         item.uploadStatus = 'error';
@@ -406,7 +406,7 @@ var FileList = function (_Component) {
             reload: Math.random()
         };
         _this.hoverData = {};
-        _this.localObj = _i18n2["default"][(0, _utils.getCookie)(props.localeCookie)] || _i18n2["default"]['zh_CN'];
+        _this.localObj = _this.props.type == 'mdf' ? _i18n2["default"][props.localeCookie || 'zh_CN'] : _i18n2["default"][(0, _utils.getCookie)(props.localeCookie)] || _i18n2["default"]['zh_CN'];
         _this.columns = [{
             title: _this.localObj.fileName,
             dataIndex: "fileName",

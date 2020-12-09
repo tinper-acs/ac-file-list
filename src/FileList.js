@@ -76,7 +76,7 @@ class FileList extends Component {
             reload: Math.random(),
         }
         this.hoverData={};
-        this.localObj = i18n[getCookie(props.localeCookie)]||i18n['zh_CN'];
+        this.localObj = this.props.type == 'mdf' ? i18n[props.localeCookie || 'zh_CN']  : (i18n[getCookie(props.localeCookie)]||i18n['zh_CN']);
         this.columns = [{
             title: this.localObj.fileName,
             dataIndex: "fileName",
@@ -267,13 +267,13 @@ class FileList extends Component {
                     this.props.callback('success','list',res);
                     this.mdfLoading && this.mdfLoading.end();
                 }else{
-                    this.props.callback('error','list',res);
+                    this.props.callback('error','list',null,res);
                     this.mdfLoading && this.mdfLoading.end();
                 }
             }).catch(error=>{
                 this.mdfLoading && this.mdfLoading.end();
 
-                this.props.callback('error','list',error);
+                this.props.callback('error','list',null,error);
                 console.error(error)
             })
         }
@@ -364,7 +364,7 @@ class FileList extends Component {
             }
         }
         if(!rowId){
-            this.props.callback('error','delete','缺少行id');
+            this.props.callback('error','delete',null,'缺少行id');
             this.mdfLoading && this.mdfLoading.end();
             return
         }
@@ -408,10 +408,10 @@ class FileList extends Component {
                 this.props.callback('success','download',res);
                 console.log(this.localObj['downloadSuccess']);
             }else{
-                this.props.callback('error','download',res);
+                this.props.callback('error','download',null,res);
             }
         }).catch(error=>{
-            this.props.callback('error','download',error);
+            this.props.callback('error','download',null,error);
             console.error(error)
         })
     }
@@ -453,7 +453,7 @@ class FileList extends Component {
             const local =  getCookie(this.props.localeCookie) || 'zh_CN' ;
             let msg = response && response.displayMessage ? response.displayMessage[local] : '上传出错';
             console.error(`${info.file.name} ${this.localObj['uploadError']}`);
-            this.props.callback('error','upload',info.file.response);
+            this.props.callback('error','upload',null,info.file.response);
             data.forEach(item=>{
                 if(item.uid==info.file.uid){
                     item.uploadStatus='error';
