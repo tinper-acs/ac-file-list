@@ -128,268 +128,7 @@ var FileList = function (_Component) {
 
         var _this = _possibleConstructorReturn(this, _Component.call(this, props));
 
-        _this._handelBeforeAct = function (type) {
-            var data = _this.state.data;
-            var beforeAct = _this.props.beforeAct;
-
-            var flag = true;
-            if (beforeAct) {
-                if (!beforeAct(type, data)) {
-                    flag = false;
-                }
-            }
-            return flag;
-        };
-
-        _this.getList = function () {
-            var pageObj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-            var propsId = arguments[1];
-
-            var id = propsId || _this.props.id;
-            var afterGetList = _this.props.afterGetList;
-
-            if (!_this._handelBeforeAct('list')) return;
-            if (id) {
-                _this.mdfLoading && _this.mdfLoading.start();
-                var url = _this.props.url.list.replace('{id}', id);
-                var params = _extends({
-                    pageSize: _this.state.pageSize,
-                    fileName: '',
-                    pageNo: _this.state.pageNo //从1开始
-                }, pageObj);
-                (0, _axios2["default"])(url, {
-                    method: "get",
-                    params: params,
-                    withCredentials: true
-                }).then(function (res) {
-                    if (res.status == 200) {
-                        if (res.data.data) {
-                            var list = res.data.data;
-                            if (afterGetList) {
-                                list = afterGetList(list);
-                            }
-                            _this.setState({
-                                data: list,
-                                pageSize: params.pageSize,
-                                pageNo: params.pageNo
-                            });
-                        }
-                        _this.props.callback('success', 'list', res);
-                        _this.mdfLoading && _this.mdfLoading.end();
-                    } else {
-                        _this.props.callback('error', 'list', null, res);
-                        _this.mdfLoading && _this.mdfLoading.end();
-                    }
-                })["catch"](function (error) {
-                    _this.mdfLoading && _this.mdfLoading.end();
-
-                    _this.props.callback('error', 'list', null, error);
-                    console.error(error);
-                });
-            }
-        };
-
-        _this.getSelectedDataFunc = function (selectedList, record, index) {
-            var ids = [];
-            selectedList.forEach(function (item, index) {
-                ids.push(item.id);
-            });
-
-            var data = (0, _cloneDeep2["default"])(_this.state.data);
-            data.forEach(function (item, index) {
-                if (ids.indexOf(item.id) == -1) {
-                    item._checked = false;
-                } else {
-                    item._checked = true;
-                }
-            });
-            _this.setState({
-                data: data,
-                selectedList: selectedList
-            }, function () {
-                _this.props.getSelectedDataFunc && _this.props.getSelectedDataFunc(selectedList, record, index);
-            });
-        };
-
-        _this.onRowHover = function (index, record) {
-            var recordActiveRow = _this.props.recordActiveRow;
-
-            if (recordActiveRow) recordActiveRow(record);
-            _this.hoverData = record;
-            _this.state.hoverData = record;
-            _this.setState({
-                hoverData: record
-            });
-        };
-
-        _this.deleteError = function (uid) {
-            var data = (0, _cloneDeep2["default"])(_this.state.data);
-            data.forEach(function (item, index) {
-                if (item.uid == uid) data.splice(index, 1);
-            });
-            _this.setState({
-                data: data
-            });
-        };
-
-        _this.reUpload = function (fileInfo, fileList) {
-            var data = (0, _cloneDeep2["default"])(_this.state.data);
-            var uid = _this.state.hoverData.uid;
-            data.forEach(function (item, index) {
-                if (item.uid == uid) data.splice(index, 1);
-            });
-            _this.setState({
-                data: data
-            }, function () {
-                _this.beforeUpload(fileInfo, fileList);
-            });
-        };
-
-        _this.deleteConfirm = function () {
-            _this.setState({
-                show: true
-            });
-        };
-
-        _this.cancelFn = function () {
-            _this.setState({
-                show: false
-            });
-        };
-
-        _this["delete"] = function () {
-            var vitualDelete = _this.props.vitualDelete;
-
-            if (!_this._handelBeforeAct('delete')) return;
-            if (vitualDelete && !vitualDelete(_this.state.hoverData, _this)) return; //本地删除
-            if (_this.mdfLoading) {
-                _this.mdfLoading.start();
-            }
-            var rowId = _this.state.hoverData.id;
-            if (!rowId) {
-                var data = _this.state.data;
-                var uid = _this.state.hoverData.uid;
-                var selectedRow = data.find(function (item) {
-                    return item.uid == uid;
-                });
-                if (selectedRow) {
-                    rowId = selectedRow.id;
-                }
-            }
-            if (!rowId) {
-                _this.props.callback('error', 'delete', null, '缺少行id');
-                _this.mdfLoading && _this.mdfLoading.end();
-                return;
-            }
-            var url = _this.props.url["delete"].replace('{id}', _this.state.hoverData.id);
-            (0, _axios2["default"])(url, {
-                method: "delete",
-                withCredentials: true
-            }).then(function (res) {
-                if (_this.mdfLoading) {
-                    _this.mdfLoading.end();
-                }
-                if (res.status == 200) {
-                    _this.props.callback('success', 'delete', res);
-                    console.log(_this.localObj['delSuccess']);
-                    _this.getList();
-                    _this.setState({
-                        show: false
-                    });
-                } else {
-                    _this.props.callback('error', 'delete', null, res);
-                }
-            })["catch"](function (error) {
-                if (_this.mdfLoading) {
-                    _this.mdfLoading.end();
-                }
-                _this.setState({
-                    show: false
-                });
-                _this.props.callback('error', 'delete', null, error);
-            });
-        };
-
-        _this.download = function () {
-            if (!_this._handelBeforeAct('download')) return;
-            var url = _this.props.url.info.replace('{id}', _this.state.hoverData.id);
-            (0, _axios2["default"])(url, {
-                method: "get",
-                withCredentials: true
-            }).then(function (res) {
-                if (res.status == 200) {
-                    window.open(res.data.filePath);
-                    _this.props.callback('success', 'download', res);
-                    console.log(_this.localObj['downloadSuccess']);
-                } else {
-                    _this.props.callback('error', 'download', null, res);
-                }
-            })["catch"](function (error) {
-                _this.props.callback('error', 'download', null, error);
-                console.error(error);
-            });
-        };
-
-        _this.fileChange = function (info) {
-            var data = (0, _cloneDeep2["default"])(_this.state.data);
-            if (info.file.status !== 'uploading') {}
-            if (info.file.status === 'done') {
-                // let id = info.file.response.data[0].id;
-                // data.forEach(item=>{
-                //     if(item.uid==info.file.uid){
-                //         item.uploadStatus='done';
-                //         item.id=id
-                //     }
-                // });
-                // this.setState({
-                //     data
-                // })
-                _this.props.callback('success', 'upload', info.file.response);
-                console.log(_this.localObj['uploadSuccess']);
-                _this.getList();
-            }
-            if (info.file.status === 'removed') {
-                var response = info.file.response;
-                var local = (0, _utils.getCookie)(_this.props.localeCookie) || 'zh_CN';
-                var msg = response && response.displayMessage ? response.displayMessage[local] : '上传出错';
-                console.error(info.file.name + ' ' + _this.localObj['uploadError']);
-                _this.props.callback('error', 'upload', null, info.file.response);
-                data.forEach(function (item) {
-                    if (item.uid == info.file.uid) {
-                        item.uploadStatus = 'error';
-                        item.errorMsg = msg;
-                    }
-                });
-                _this.setState({
-                    data: data
-                });
-            }
-        };
-
-        _this.beforeUpload = function (file, fileList) {
-            var data = (0, _cloneDeep2["default"])(_this.state.data);
-            fileList.forEach(function (fileInfo, index) {
-                var nameAry = fileInfo.name.split('.');
-                var obj = {
-                    fileExtension: '.' + nameAry[nameAry.length - 1],
-                    fileName: nameAry.splice(0, nameAry.length - 1).join('.'),
-                    fileSizeText: (0, _utils.getSize)(fileInfo.size),
-                    uid: fileInfo.uid,
-                    userName: decodeURIComponent((0, _utils.getCookie)('yonyou_uname')),
-                    uploadStatus: 'uploading'
-                };
-                data.unshift(obj);
-            });
-            _this.setState({
-                data: data
-            });
-        };
-
-        _this.changeOpenStatus = function () {
-            _this.setState({
-                open: !_this.state.open
-            });
-        };
+        _initialiseProps.call(_this);
 
         if (_this.props.type == 'mdf' && window.cb && cb.utils && cb.utils.loadingControl) {
             _this.mdfLoading = cb.utils.loadingControl;
@@ -406,7 +145,11 @@ var FileList = function (_Component) {
             reload: Math.random()
         };
         _this.hoverData = {};
-        _this.localObj = _this.props.type == 'mdf' ? _i18n2["default"][props.localeCookie || 'zh_CN'] : _i18n2["default"][(0, _utils.getCookie)(props.localeCookie)] || _i18n2["default"]['zh_CN'];
+        //兼容低代码
+        var local = ['zh_CN', 'zh_TW', 'en_US'].findIndex(function (item) {
+            return item == props.localeCookie;
+        }) > -1 ? props.localeCookie : 'zh_CN';
+        _this.localObj = _this.props.type == 'mdf' ? _i18n2["default"][local] : _i18n2["default"][(0, _utils.getCookie)(props.localeCookie)] || _i18n2["default"]['zh_CN'];
         _this.columns = [{
             title: _this.localObj.fileName,
             dataIndex: "fileName",
@@ -740,6 +483,273 @@ var FileList = function (_Component) {
 
     return FileList;
 }(_react.Component);
+
+var _initialiseProps = function _initialiseProps() {
+    var _this2 = this;
+
+    this._handelBeforeAct = function (type) {
+        var data = _this2.state.data;
+        var beforeAct = _this2.props.beforeAct;
+
+        var flag = true;
+        if (beforeAct) {
+            if (!beforeAct(type, data)) {
+                flag = false;
+            }
+        }
+        return flag;
+    };
+
+    this.getList = function () {
+        var pageObj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+        var propsId = arguments[1];
+
+        var id = propsId || _this2.props.id;
+        var afterGetList = _this2.props.afterGetList;
+
+        if (!_this2._handelBeforeAct('list')) return;
+        if (id) {
+            _this2.mdfLoading && _this2.mdfLoading.start();
+            var url = _this2.props.url.list.replace('{id}', id);
+            var params = _extends({
+                pageSize: _this2.state.pageSize,
+                fileName: '',
+                pageNo: _this2.state.pageNo //从1开始
+            }, pageObj);
+            (0, _axios2["default"])(url, {
+                method: "get",
+                params: params,
+                withCredentials: true
+            }).then(function (res) {
+                if (res.status == 200) {
+                    if (res.data.data) {
+                        var list = res.data.data;
+                        if (afterGetList) {
+                            list = afterGetList(list);
+                        }
+                        _this2.setState({
+                            data: list,
+                            pageSize: params.pageSize,
+                            pageNo: params.pageNo
+                        });
+                    }
+                    _this2.props.callback('success', 'list', res);
+                    _this2.mdfLoading && _this2.mdfLoading.end();
+                } else {
+                    _this2.props.callback('error', 'list', null, res);
+                    _this2.mdfLoading && _this2.mdfLoading.end();
+                }
+            })["catch"](function (error) {
+                _this2.mdfLoading && _this2.mdfLoading.end();
+
+                _this2.props.callback('error', 'list', null, error);
+                console.error(error);
+            });
+        }
+    };
+
+    this.getSelectedDataFunc = function (selectedList, record, index) {
+        var ids = [];
+        selectedList.forEach(function (item, index) {
+            ids.push(item.id);
+        });
+
+        var data = (0, _cloneDeep2["default"])(_this2.state.data);
+        data.forEach(function (item, index) {
+            if (ids.indexOf(item.id) == -1) {
+                item._checked = false;
+            } else {
+                item._checked = true;
+            }
+        });
+        _this2.setState({
+            data: data,
+            selectedList: selectedList
+        }, function () {
+            _this2.props.getSelectedDataFunc && _this2.props.getSelectedDataFunc(selectedList, record, index);
+        });
+    };
+
+    this.onRowHover = function (index, record) {
+        var recordActiveRow = _this2.props.recordActiveRow;
+
+        if (recordActiveRow) recordActiveRow(record);
+        _this2.hoverData = record;
+        _this2.state.hoverData = record;
+        _this2.setState({
+            hoverData: record
+        });
+    };
+
+    this.deleteError = function (uid) {
+        var data = (0, _cloneDeep2["default"])(_this2.state.data);
+        data.forEach(function (item, index) {
+            if (item.uid == uid) data.splice(index, 1);
+        });
+        _this2.setState({
+            data: data
+        });
+    };
+
+    this.reUpload = function (fileInfo, fileList) {
+        var data = (0, _cloneDeep2["default"])(_this2.state.data);
+        var uid = _this2.state.hoverData.uid;
+        data.forEach(function (item, index) {
+            if (item.uid == uid) data.splice(index, 1);
+        });
+        _this2.setState({
+            data: data
+        }, function () {
+            _this2.beforeUpload(fileInfo, fileList);
+        });
+    };
+
+    this.deleteConfirm = function () {
+        _this2.setState({
+            show: true
+        });
+    };
+
+    this.cancelFn = function () {
+        _this2.setState({
+            show: false
+        });
+    };
+
+    this["delete"] = function () {
+        var vitualDelete = _this2.props.vitualDelete;
+
+        if (!_this2._handelBeforeAct('delete')) return;
+        if (vitualDelete && !vitualDelete(_this2.state.hoverData, _this2)) return; //本地删除
+        if (_this2.mdfLoading) {
+            _this2.mdfLoading.start();
+        }
+        var rowId = _this2.state.hoverData.id;
+        if (!rowId) {
+            var data = _this2.state.data;
+            var uid = _this2.state.hoverData.uid;
+            var selectedRow = data.find(function (item) {
+                return item.uid == uid;
+            });
+            if (selectedRow) {
+                rowId = selectedRow.id;
+            }
+        }
+        if (!rowId) {
+            _this2.props.callback('error', 'delete', null, '缺少行id');
+            _this2.mdfLoading && _this2.mdfLoading.end();
+            return;
+        }
+        var url = _this2.props.url["delete"].replace('{id}', _this2.state.hoverData.id);
+        (0, _axios2["default"])(url, {
+            method: "delete",
+            withCredentials: true
+        }).then(function (res) {
+            if (_this2.mdfLoading) {
+                _this2.mdfLoading.end();
+            }
+            if (res.status == 200) {
+                _this2.props.callback('success', 'delete', res);
+                console.log(_this2.localObj['delSuccess']);
+                _this2.getList();
+                _this2.setState({
+                    show: false
+                });
+            } else {
+                _this2.props.callback('error', 'delete', null, res);
+            }
+        })["catch"](function (error) {
+            if (_this2.mdfLoading) {
+                _this2.mdfLoading.end();
+            }
+            _this2.setState({
+                show: false
+            });
+            _this2.props.callback('error', 'delete', null, error);
+        });
+    };
+
+    this.download = function () {
+        if (!_this2._handelBeforeAct('download')) return;
+        var url = _this2.props.url.info.replace('{id}', _this2.state.hoverData.id);
+        (0, _axios2["default"])(url, {
+            method: "get",
+            withCredentials: true
+        }).then(function (res) {
+            if (res.status == 200) {
+                window.open(res.data.filePath);
+                _this2.props.callback('success', 'download', res);
+                console.log(_this2.localObj['downloadSuccess']);
+            } else {
+                _this2.props.callback('error', 'download', null, res);
+            }
+        })["catch"](function (error) {
+            _this2.props.callback('error', 'download', null, error);
+            console.error(error);
+        });
+    };
+
+    this.fileChange = function (info) {
+        var data = (0, _cloneDeep2["default"])(_this2.state.data);
+        if (info.file.status !== 'uploading') {}
+        if (info.file.status === 'done') {
+            // let id = info.file.response.data[0].id;
+            // data.forEach(item=>{
+            //     if(item.uid==info.file.uid){
+            //         item.uploadStatus='done';
+            //         item.id=id
+            //     }
+            // });
+            // this.setState({
+            //     data
+            // })
+            _this2.props.callback('success', 'upload', info.file.response);
+            console.log(_this2.localObj['uploadSuccess']);
+            _this2.getList();
+        }
+        if (info.file.status === 'removed') {
+            var response = info.file.response;
+            var local = (0, _utils.getCookie)(_this2.props.localeCookie) || 'zh_CN';
+            var msg = response && response.displayMessage ? response.displayMessage[local] : '上传出错';
+            console.error(info.file.name + ' ' + _this2.localObj['uploadError']);
+            _this2.props.callback('error', 'upload', null, info.file.response);
+            data.forEach(function (item) {
+                if (item.uid == info.file.uid) {
+                    item.uploadStatus = 'error';
+                    item.errorMsg = msg;
+                }
+            });
+            _this2.setState({
+                data: data
+            });
+        }
+    };
+
+    this.beforeUpload = function (file, fileList) {
+        var data = (0, _cloneDeep2["default"])(_this2.state.data);
+        fileList.forEach(function (fileInfo, index) {
+            var nameAry = fileInfo.name.split('.');
+            var obj = {
+                fileExtension: '.' + nameAry[nameAry.length - 1],
+                fileName: nameAry.splice(0, nameAry.length - 1).join('.'),
+                fileSizeText: (0, _utils.getSize)(fileInfo.size),
+                uid: fileInfo.uid,
+                userName: decodeURIComponent((0, _utils.getCookie)('yonyou_uname')),
+                uploadStatus: 'uploading'
+            };
+            data.unshift(obj);
+        });
+        _this2.setState({
+            data: data
+        });
+    };
+
+    this.changeOpenStatus = function () {
+        _this2.setState({
+            open: !_this2.state.open
+        });
+    };
+};
 
 ;
 

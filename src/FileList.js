@@ -76,7 +76,9 @@ class FileList extends Component {
             reload: Math.random(),
         }
         this.hoverData={};
-        this.localObj = this.props.type == 'mdf' ? i18n[props.localeCookie || 'zh_CN']  : (i18n[getCookie(props.localeCookie)]||i18n['zh_CN']);
+        //兼容低代码
+        const local = ['zh_CN','zh_TW','en_US'].findIndex(item=>item==props.localeCookie) > -1 ? props.localeCookie : 'zh_CN';
+        this.localObj = this.props.type == 'mdf' ? i18n[local]  : (i18n[getCookie(props.localeCookie)]||i18n['zh_CN']);
         this.columns = [{
             title: this.localObj.fileName,
             dataIndex: "fileName",
