@@ -492,7 +492,7 @@ class FileList extends Component {
     }
 
     render(){
-        let { clsfix,id,disabled,uploadProps,canUnfold,uploadBut,toolbar,type, title } = this.props;
+        let { clsfix,id,disabled,uploadProps,canUnfold,uploadBut,toolbar,type, title, uplaodBtnDisabled } = this.props;
         let { data,open } = this.state;
         const uploadP =Object.assign({
             withCredentials:true,
@@ -519,9 +519,12 @@ class FileList extends Component {
                                                 upload:{
                                                     node:<div>
                                                         {toolbar}
-                                                        <Upload {...uploadP}>
-                                                            {type == 'mdf' ? uploadBut : <Btns localeCookie={this.props.localeCookie} powerBtns={this.props.powerBtns} btns={{ upload:{} }}/>}
-                                                        </Upload>
+                                                        {uplaodBtnDisabled && type == 'mdf'
+                                                            ? uploadBut :
+                                                            <Upload {...uploadP}>
+                                                                {type == 'mdf' ? uploadBut : <Btns localeCookie={this.props.localeCookie} powerBtns={this.props.powerBtns} btns={{ upload:{} }}/>}
+                                                            </Upload>
+                                                        }
                                                     </div>
                                                 },
                                               }}

@@ -350,7 +350,8 @@ var FileList = function (_Component) {
             uploadBut = _props2.uploadBut,
             toolbar = _props2.toolbar,
             type = _props2.type,
-            title = _props2.title;
+            title = _props2.title,
+            uplaodBtnDisabled = _props2.uplaodBtnDisabled;
         var _state = this.state,
             data = _state.data,
             open = _state.open;
@@ -390,7 +391,7 @@ var FileList = function (_Component) {
                                     'div',
                                     null,
                                     toolbar,
-                                    _react2["default"].createElement(
+                                    uplaodBtnDisabled && type == 'mdf' ? uploadBut : _react2["default"].createElement(
                                         _beeUpload2["default"],
                                         uploadP,
                                         type == 'mdf' ? uploadBut : _react2["default"].createElement(_acBtns2["default"], { localeCookie: this.props.localeCookie, powerBtns: this.props.powerBtns, btns: { upload: {} } })
