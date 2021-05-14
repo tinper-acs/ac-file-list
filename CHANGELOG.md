@@ -1,3 +1,12 @@
+## [1.0.17](https://github.com/tinper-acs/ac-file-list/compare/v1.0.16...v1.0.17) (2021-05-14)
+
+
+### Bug Fixes
+
+* update ([6c5baef](https://github.com/tinper-acs/ac-file-list/commit/6c5baefd3bd88ca9abd066c733231a49bad40aea))
+
+
+
 <a name="1.0.16"></a>
 ## [1.0.16](https://github.com/tinper-acs/ac-file-list/compare/v1.0.15...v1.0.16) (2020-12-24)
 
