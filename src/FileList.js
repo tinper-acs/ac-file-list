@@ -237,7 +237,7 @@ class FileList extends Component {
         return flag
     }
     /**获得文件列表 */
-    getList=(pageObj={},propsId)=>{
+    getList=(pageObj={},propsId, changeFileInfo)=>{
         let id = propsId||this.props.id;
         let {afterGetList} =this.props;
         if(!this._handelBeforeAct('list')) return;
@@ -260,8 +260,9 @@ class FileList extends Component {
                         if(afterGetList){
                             list=afterGetList(list)
                         }
+                        const newList = this.formatData(list || [], changeFileInfo);
                         this.setState({
-                            data:list,
+                            data:newList,
                             pageSize:params.pageSize,
                             pageNo:params.pageNo
                         })
@@ -281,7 +282,30 @@ class FileList extends Component {
         }
 
     }
-
+    formatData(newData = [], changeFileInfo) {
+        if (!changeFileInfo) {
+            return [...newData]
+        }
+        const id = changeFileInfo.response.data && changeFileInfo.response.data.length && changeFileInfo.response.data[0] && changeFileInfo.response.data[0].id 
+        const uid = changeFileInfo.uid;
+        const data = this.state.data;
+        const obj = {};
+        if (data && data.length) {
+            newData.forEach(item => {
+                obj[item.id] = item;
+            });
+            const result = [];
+            data.forEach(item => {
+                if (item.uid === uid) {
+                    result.push(obj[id]);
+                } else {
+                    result.push(item);
+                }
+            })
+            return result;
+        }
+        return [...newData];
+    }
     getSelectedDataFunc = (selectedList,record,index) => {
         let ids = []
         selectedList.forEach((item,index) => {
@@ -381,10 +405,14 @@ class FileList extends Component {
             if(res.status==200){
                 this.props.callback('success','delete',res);
                 console.log(this.localObj['delSuccess']);
-                this.getList()
+                const data = this.state.data;
+                const list = data.filter(item => item.id !== rowId);
                 this.setState({
+                    data: list,
                     show:false
-                })
+                }, () => {
+                    // this.getList()
+                });
             }else{
                 this.props.callback('error','delete',null,res);
             }
@@ -448,7 +476,7 @@ class FileList extends Component {
             // })
             this.props.callback('success','upload',info.file.response);
             console.log(this.localObj['uploadSuccess'])
-            this.getList()
+            this.getList({},'', info.file)
         }
         if (info.file.status === 'removed') {
             const response = info.file.response;
