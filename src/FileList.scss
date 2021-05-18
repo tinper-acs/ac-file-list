@@ -91,6 +91,8 @@ $font-size: 12px;
             }
 
             .u-table-header {
+                margin-bottom: 0px;
+                padding-bottom: 0px;
                 tr {
                     &.filterable th {
                         padding: 0 2px;

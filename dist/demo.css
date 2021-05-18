@@ -209,28 +209,31 @@
   .ac-upload-list-file-area .u-table .u-table-scroll tr th:first-child {
     padding: 0;
     padding-left: 12px; }
-  .ac-upload-list-file-area .u-table .u-table-header tr.filterable th {
-    padding: 0 2px; }
-  .ac-upload-list-file-area .u-table .u-table-header tr th {
-    overflow: visible;
-    background-clip: padding-box;
-    word-break: keep-all;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    text-align: left;
-    background: #eceff5;
-    padding: 0;
-    height: 35px;
-    padding-left: 12px;
-    font-size: 12px; }
-    .ac-upload-list-file-area .u-table .u-table-header tr th .u-table-thead-th-drag-gap .online {
-      height: 12px;
-      width: 1px;
-      background: transparent;
-      margin: 11px auto;
-      line-height: 100%;
-      background: #D0D0D0;
-      margin-right: 100px; }
+  .ac-upload-list-file-area .u-table .u-table-header {
+    margin-bottom: 0px;
+    padding-bottom: 0px; }
+    .ac-upload-list-file-area .u-table .u-table-header tr.filterable th {
+      padding: 0 2px; }
+    .ac-upload-list-file-area .u-table .u-table-header tr th {
+      overflow: visible;
+      background-clip: padding-box;
+      word-break: keep-all;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      text-align: left;
+      background: #eceff5;
+      padding: 0;
+      height: 35px;
+      padding-left: 12px;
+      font-size: 12px; }
+      .ac-upload-list-file-area .u-table .u-table-header tr th .u-table-thead-th-drag-gap .online {
+        height: 12px;
+        width: 1px;
+        background: transparent;
+        margin: 11px auto;
+        line-height: 100%;
+        background: #D0D0D0;
+        margin-right: 100px; }
   .ac-upload-list-file-area .u-table .u-table-tbody tr {
     transition: none; }
     .ac-upload-list-file-area .u-table .u-table-tbody tr:nth-child(2n) {
@@ -303,6 +306,9 @@
       margin-bottom: 2px; }
     .ac-upload-list-file-area .u-table .u-table-tbody .opt-btns .file-list-linetoolbar-container {
       display: block; }
+      .ac-upload-list-file-area .u-table .u-table-tbody .opt-btns .file-list-linetoolbar-container > div {
+        -ms-flex-pack: start;
+        justify-content: flex-start; }
 
 .ac-upload-list .u-upload-list {
   display: none; }
