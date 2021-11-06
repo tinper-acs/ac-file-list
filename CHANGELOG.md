@@ -1,3 +1,12 @@
+## [1.0.19](https://github.com/tinper-acs/ac-file-list/compare/v1.0.18...v1.0.19) (2021-11-06)
+
+
+### Bug Fixes
+
+* 锁定bee-table版本 ([63ff818](https://github.com/tinper-acs/ac-file-list/commit/63ff8187a6d53348b18b7f5e41ddcf6653818ab5))
+
+
+
 ## [1.0.18](https://github.com/tinper-acs/ac-file-list/compare/v1.0.17...v1.0.18) (2021-05-18)
 
 
