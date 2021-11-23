@@ -1,6 +1,6 @@
 {
  "name": "ac-file-list",
- "version": "1.0.19",
+ "version": "2.0.0",
  "description": "FileList ui component for react",
  "keywords": [
   "react",
@@ -43,13 +43,9 @@
   "ac-btns": "latest",
   "axios": "^0.19.0",
   "babel-runtime": "6.23.0",
-  "bee-icon": "^1.0.11",
-  "bee-modal": "^2.1.2",
-  "bee-progress-bar": "^2.0.1",
-  "bee-table": "2.3.14",
-  "bee-upload": "^2.0.5",
   "classnames": "^2.2.5",
-  "clone-deep": "^4.0.1"
+  "clone-deep": "^4.0.1",
+  "@tinper/next-ui": "snapshot"
  },
  "devDependencies": {
   "chai": "^3.5.0",

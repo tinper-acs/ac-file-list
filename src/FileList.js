@@ -1,18 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Upload from 'bee-upload';
-import ProgressBar from 'bee-progress-bar';
-import Icon from 'bee-icon';
-import Modal from 'bee-modal';
-import Table from 'bee-table'
-import Btns from 'ac-btns';
-import Checkbox from 'bee-checkbox';
 import cloneDeep from 'clone-deep';
 import request from 'axios';
 import { getSize, getFileNames,dateFormate,getCookie } from './utils.js';
 import i18n from './i18n.js';
-import multiSelect from "bee-table/build/lib/newMultiSelect";
-import sort from "bee-table/build/lib/sort";
+import Btns from 'ac-btns';
+
+import { Modal, Icon, Checkbox, Table, Progress, Upload } from '@tinper/next-ui';
+const {sort, multiSelect} = Table;
+const ProgressBar = Progress.Bar;
 
 const MultiSelectTable = multiSelect(Table, Checkbox);
 const ComplexTable = sort(MultiSelectTable, Icon);
@@ -586,7 +582,7 @@ class FileList extends Component {
                         size='sm'
                         className='pop_dialog'
                         show = { this.state.show }
-                        onHide = { this.cancelFn } >
+                        onCancel = { this.cancelFn } >
                             <Modal.Header closeButton>
                                 <Modal.Title>{this.localObj.delete}</Modal.Title>
                             </Modal.Header>

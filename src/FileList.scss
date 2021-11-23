@@ -1,4 +1,6 @@
 @import '../node_modules/ac-btns/src/Btns.scss';
+@import "../node_modules/@tinper/next-ui/dist/tinper-next.css";
+$prefix: wui;
 $font-size: 12px;
 @keyframes beLong {
     from {
@@ -63,7 +65,7 @@ $font-size: 12px;
     }
 
     &-file-area {
-        .u-checkbox .u-checkbox-label:before {
+        .#{$prefix}-checkbox .#{$prefix}-checkbox-label:before {
             position: relative;
             left: -16px;
         }
@@ -72,25 +74,25 @@ $font-size: 12px;
             line-height: 1;
         }
 
-        .u-table-filter-column-pop-cont-item {
+        .#{$prefix}-table-filter-column-pop-cont-item {
             &>span {
                 margin: 0 !important;
             }
         }
-        .u-table {
+        .#{$prefix}-table {
             width: 100%;
-            .u-table-placeholder .table-nodata{
+            .#{$prefix}-table-placeholder .table-nodata{
                 position:relative;
             }
-            .u-table-fixed-left tr td:first-child,
-            .u-table-fixed-left tr th:first-child,
-            .u-table-scroll tr td:first-child,
-            .u-table-scroll tr th:first-child {
+            .#{$prefix}-table-fixed-left tr td:first-child,
+            .#{$prefix}-table-fixed-left tr th:first-child,
+            .#{$prefix}-table-scroll tr td:first-child,
+            .#{$prefix}-table-scroll tr th:first-child {
                 padding: 0;
                 padding-left: 12px;
             }
 
-            .u-table-header {
+            .#{$prefix}-table-header {
                 margin-bottom: 0px;
                 padding-bottom: 0px;
                 tr {
@@ -111,7 +113,7 @@ $font-size: 12px;
                         padding-left: 12px;
                         font-size: $font-size;
 
-                        .u-table-thead-th-drag-gap .online {
+                        .#{$prefix}-table-thead-th-drag-gap .online {
                             height: 12px;
                             width: 1px;
                             background: transparent;
@@ -125,7 +127,7 @@ $font-size: 12px;
 
             }
 
-            .u-table-tbody {
+            .#{$prefix}-table-tbody {
                 tr {
                     transition: none;
 
@@ -138,12 +140,12 @@ $font-size: 12px;
                     }
 
                     &:hover,
-                    &.u-table-row-hover {
+                    &.#{$prefix}-table-row-hover {
                         background: #F3F3F3;
 
                     }
 
-                    &.u-table-row {
+                    &.#{$prefix}-table-row {
 
                         &.selected,
                         &.ref-multiple-table-row-selected {
@@ -176,13 +178,13 @@ $font-size: 12px;
 
             }
 
-            .u-table-content .u-table-fixed-right {
-                .u-table-thead-th {
+            .#{$prefix}-table-content .#{$prefix}-table-fixed-right {
+                .#{$prefix}-table-thead-th {
                     padding-left: 20px;
                 }
 
-                .u-table-body-outer {
-                    .u-table-tbody {
+                .#{$prefix}-table-body-outer {
+                    .#{$prefix}-table-tbody {
                         tr td {
                             padding-left: 0;
 
@@ -204,7 +206,7 @@ $font-size: 12px;
                 }
             }
 
-            .u-table-thead th {
+            .#{$prefix}-table-thead th {
                 background: #f1f2f5;
                 color: #212121;
             }
@@ -216,19 +218,19 @@ $font-size: 12px;
                 }
             }
 
-            .u-table-tbody {
+            .#{$prefix}-table-tbody {
                 tr td {
-                    .u-progress {
+                    .#{$prefix}-bar {
                         margin-bottom: 0;
                         margin-right: 20px;
 
-                        .u-progress-bar {
+                        .#{$prefix}-bar-bar {
                             background: #2196F3;
                         }
                     }
 
-                    .u-progress.uploading {
-                        .u-progress-bar {
+                    .#{$prefix}-bar.uploading {
+                        .#{$prefix}-bar-bar {
                             animation: beLong 5s;
                             animation-fill-mode: forwards;
                         }
@@ -252,8 +254,8 @@ $font-size: 12px;
                     min-height: 20px;
                     .ac-btns {
 
-                        button.ac-btns-item.u-button.ac-btns-write,
-                        button.ac-btns-item.u-button.ac-btns-write:hover {
+                        button.ac-btns-item.#{$prefix}-button.ac-btns-write,
+                        button.ac-btns-item.#{$prefix}-button.ac-btns-write:hover {
                             color: #fff !important;
                             background: #505F79 !important;
                             border-color: #505F79 !important;
@@ -278,13 +280,13 @@ $font-size: 12px;
         }
     }
 
-    .u-upload-list {
+    .#{$prefix}-upload-list {
         display: none;
     }
 
 }
 
-.pop_dialog.u-modal {
+.pop_dialog.#{$prefix}-modal {
 
     .pop_body,
     .pop_footer {
@@ -303,7 +305,7 @@ $font-size: 12px;
 
     }
 
-    .u-modal-header {
+    .#{$prefix}-modal-header {
         background-color: rgb(243, 243, 243);
         font-size: 14px;
         color: rgb(17, 17, 17);
@@ -342,9 +344,9 @@ $font-size: 12px;
         }
     }
 
-    .u-modal-dialog {
-        .u-modal-content {
-            .u-modal-footer {
+    .#{$prefix}-modal-dialog {
+        .#{$prefix}-modal-content {
+            .#{$prefix}-modal-footer {
                 text-align: right;
             }
         }
