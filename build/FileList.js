@@ -14,34 +14,6 @@ var _propTypes = require('prop-types');
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
-var _beeUpload = require('bee-upload');
-
-var _beeUpload2 = _interopRequireDefault(_beeUpload);
-
-var _beeProgressBar = require('bee-progress-bar');
-
-var _beeProgressBar2 = _interopRequireDefault(_beeProgressBar);
-
-var _beeIcon = require('bee-icon');
-
-var _beeIcon2 = _interopRequireDefault(_beeIcon);
-
-var _beeModal = require('bee-modal');
-
-var _beeModal2 = _interopRequireDefault(_beeModal);
-
-var _beeTable = require('bee-table');
-
-var _beeTable2 = _interopRequireDefault(_beeTable);
-
-var _acBtns = require('ac-btns');
-
-var _acBtns2 = _interopRequireDefault(_acBtns);
-
-var _beeCheckbox = require('bee-checkbox');
-
-var _beeCheckbox2 = _interopRequireDefault(_beeCheckbox);
-
 var _cloneDeep = require('clone-deep');
 
 var _cloneDeep2 = _interopRequireDefault(_cloneDeep);
@@ -56,17 +28,17 @@ var _i18n = require('./i18n.js');
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
-var _newMultiSelect = require('bee-table/build/lib/newMultiSelect');
+var _acBtns = require('ac-btns');
 
-var _newMultiSelect2 = _interopRequireDefault(_newMultiSelect);
+var _acBtns2 = _interopRequireDefault(_acBtns);
 
-var _sort = require('bee-table/build/lib/sort');
-
-var _sort2 = _interopRequireDefault(_sort);
+var _nextUi = require('@tinper/next-ui');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -76,8 +48,13 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
 
-var MultiSelectTable = (0, _newMultiSelect2["default"])(_beeTable2["default"], _beeCheckbox2["default"]);
-var ComplexTable = (0, _sort2["default"])(MultiSelectTable, _beeIcon2["default"]);
+var sort = _nextUi.Table.sort,
+    multiSelect = _nextUi.Table.multiSelect;
+
+var ProgressBar = _nextUi.Progress.Bar;
+
+var MultiSelectTable = multiSelect(_nextUi.Table, _nextUi.Checkbox);
+var ComplexTable = sort(MultiSelectTable, _nextUi.Icon);
 var propTypes = {
     canUnfold: _propTypes2["default"].bool, //是否可以展开收起
     id: _propTypes2["default"].string.isRequired,
@@ -176,9 +153,9 @@ var FileList = function (_Component) {
             width: 200,
             render: function render(text, record, index) {
                 if (record.uploadStatus == 'uploading') {
-                    return _react2["default"].createElement(_beeProgressBar2["default"], { className: 'uploading', size: 'sm', active: true, now: 20 });
+                    return _react2["default"].createElement(ProgressBar, { className: 'uploading', size: 'sm', active: true, now: 20 });
                 } else if (record.uploadStatus == 'error') {
-                    return _react2["default"].createElement(_beeProgressBar2["default"], { size: 'sm', active: true, now: 90 });
+                    return _react2["default"].createElement(ProgressBar, { size: 'sm', active: true, now: 90 });
                 } else if (record.uploadStatus == 'done') {
                     return decodeURIComponent((0, _utils.getCookie)('yonyou_uname'));
                 } else {
@@ -196,7 +173,7 @@ var FileList = function (_Component) {
                         'span',
                         { className: 'upload-status uploading' },
                         ' ',
-                        _react2["default"].createElement(_beeIcon2["default"], { type: 'uf-loadingstate' }),
+                        _react2["default"].createElement(_nextUi.Icon, { type: 'uf-loadingstate' }),
                         ' ',
                         _this.localObj.uploading,
                         ' '
@@ -206,7 +183,7 @@ var FileList = function (_Component) {
                         'span',
                         { className: 'upload-status error', title: record.errorMsg || _this.localObj.uploadError },
                         ' ',
-                        _react2["default"].createElement(_beeIcon2["default"], { type: 'uf-exc-c' }),
+                        _react2["default"].createElement(_nextUi.Icon, { type: 'uf-exc-c' }),
                         record.errorMsg || _this.localObj.uploadError
                     );
                 } else if (record.uploadStatus == 'done') {
@@ -240,7 +217,7 @@ var FileList = function (_Component) {
                                 btns: {
                                     reupload: {
                                         node: _react2["default"].createElement(
-                                            _beeUpload2["default"],
+                                            _nextUi.Upload,
                                             uploadP,
                                             _react2["default"].createElement(_acBtns2["default"], { localeCookie: _this.props.localeCookie,
                                                 powerBtns: _this.props.powerBtns,
@@ -320,6 +297,34 @@ var FileList = function (_Component) {
 
     /**获得文件列表 */
 
+
+    FileList.prototype.formatData = function formatData() {
+        var newData = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+        var changeFileInfo = arguments[1];
+
+        if (!changeFileInfo) {
+            return [].concat(_toConsumableArray(newData));
+        }
+        var id = changeFileInfo.response.data && changeFileInfo.response.data.length && changeFileInfo.response.data[0] && changeFileInfo.response.data[0].id;
+        var uid = changeFileInfo.uid;
+        var data = this.state.data;
+        var obj = {};
+        if (data && data.length) {
+            newData.forEach(function (item) {
+                obj[item.id] = item;
+            });
+            var result = [];
+            data.forEach(function (item) {
+                if (item.uid === uid) {
+                    result.push(obj[id]);
+                } else {
+                    result.push(item);
+                }
+            });
+            return result;
+        }
+        return [].concat(_toConsumableArray(newData));
+    };
     /**划过 */
 
     /**删除上传失败的文件 */
@@ -373,7 +378,7 @@ var FileList = function (_Component) {
                 canUnfold ? _react2["default"].createElement(
                     'div',
                     { className: clsfix + '-text', onClick: this.changeOpenStatus },
-                    _react2["default"].createElement(_beeIcon2["default"], { type: open ? 'uf-triangle-down' : 'uf-triangle-right' }),
+                    _react2["default"].createElement(_nextUi.Icon, { type: open ? 'uf-triangle-down' : 'uf-triangle-right' }),
                     _react2["default"].createElement(
                         'span',
                         null,
@@ -392,7 +397,7 @@ var FileList = function (_Component) {
                                     null,
                                     toolbar,
                                     uplaodBtnDisabled && type == 'mdf' ? uploadBut : _react2["default"].createElement(
-                                        _beeUpload2["default"],
+                                        _nextUi.Upload,
                                         uploadP,
                                         type == 'mdf' ? uploadBut : _react2["default"].createElement(_acBtns2["default"], { localeCookie: this.props.localeCookie, powerBtns: this.props.powerBtns, btns: { upload: {} } })
                                     )
@@ -416,7 +421,7 @@ var FileList = function (_Component) {
                     onRowHover: this.onRowHover,
                     multiSelect: { type: "checkbox" }
 
-                }) : _react2["default"].createElement(_beeTable2["default"], {
+                }) : _react2["default"].createElement(_nextUi.Table, {
                     columns: this.columns,
                     data: data,
                     rowKey: function rowKey(record, index) {
@@ -428,23 +433,23 @@ var FileList = function (_Component) {
 
                 }),
                 _react2["default"].createElement(
-                    _beeModal2["default"],
+                    _nextUi.Modal,
                     {
                         size: 'sm',
                         className: 'pop_dialog',
                         show: this.state.show,
-                        onHide: this.cancelFn },
+                        onCancel: this.cancelFn },
                     _react2["default"].createElement(
-                        _beeModal2["default"].Header,
+                        _nextUi.Modal.Header,
                         { closeButton: true },
                         _react2["default"].createElement(
-                            _beeModal2["default"].Title,
+                            _nextUi.Modal.Title,
                             null,
                             this.localObj["delete"]
                         )
                     ),
                     _react2["default"].createElement(
-                        _beeModal2["default"].Body,
+                        _nextUi.Modal.Body,
                         { className: 'pop_body' },
                         _react2["default"].createElement(
                             'div',
@@ -463,7 +468,7 @@ var FileList = function (_Component) {
                         )
                     ),
                     _react2["default"].createElement(
-                        _beeModal2["default"].Footer,
+                        _nextUi.Modal.Footer,
                         { className: 'pop_footer' },
                         _react2["default"].createElement(_acBtns2["default"], { localeCookie: this.props.localeCookie,
                             powerBtns: this.props.powerBtns,
@@ -504,6 +509,7 @@ var _initialiseProps = function _initialiseProps() {
     this.getList = function () {
         var pageObj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
         var propsId = arguments[1];
+        var changeFileInfo = arguments[2];
 
         var id = propsId || _this2.props.id;
         var afterGetList = _this2.props.afterGetList;
@@ -528,8 +534,9 @@ var _initialiseProps = function _initialiseProps() {
                         if (afterGetList) {
                             list = afterGetList(list);
                         }
+                        var newList = _this2.formatData(list || [], changeFileInfo);
                         _this2.setState({
-                            data: list,
+                            data: newList,
                             pageSize: params.pageSize,
                             pageNo: params.pageNo
                         });
@@ -652,9 +659,15 @@ var _initialiseProps = function _initialiseProps() {
             if (res.status == 200) {
                 _this2.props.callback('success', 'delete', res);
                 console.log(_this2.localObj['delSuccess']);
-                _this2.getList();
+                var _data = _this2.state.data;
+                var list = _data.filter(function (item) {
+                    return item.id !== rowId;
+                });
                 _this2.setState({
+                    data: list,
                     show: false
+                }, function () {
+                    // this.getList()
                 });
             } else {
                 _this2.props.callback('error', 'delete', null, res);
@@ -706,7 +719,7 @@ var _initialiseProps = function _initialiseProps() {
             // })
             _this2.props.callback('success', 'upload', info.file.response);
             console.log(_this2.localObj['uploadSuccess']);
-            _this2.getList();
+            _this2.getList({}, '', info.file);
         }
         if (info.file.status === 'removed') {
             var response = info.file.response;
