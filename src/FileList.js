@@ -4,9 +4,8 @@ import cloneDeep from 'clone-deep';
 import request from 'axios';
 import { getSize, getFileNames,dateFormate,getCookie } from './utils.js';
 import i18n from './i18n.js';
-import Btns from 'ac-btns';
 
-import { Modal, Icon, Checkbox, Table, Progress, Upload } from '@tinper/next-ui';
+import { Modal, Icon, Checkbox, Table, Progress, Upload, Button } from '@tinper/next-ui';
 const {sort, multiSelect} = Table;
 const ProgressBar = Progress.Bar;
 
@@ -148,45 +147,22 @@ class FileList extends Component {
                             withCredentials:true
                         },this.props.uploadProps);
                         return <div className="opt-btns">
-                            <Btns localeCookie={this.props.localeCookie}
-                                    powerBtns={this.props.powerBtns}
-                                    type='line'
-                                    btns={{
-                                        reupload: {
-                                            node:<Upload {...uploadP}>
-                                                <Btns localeCookie={this.props.localeCookie}
-                                                    powerBtns={this.props.powerBtns}
-                                                    type='line'
-                                                    btns={{ reupload:{} }}/>
-                                            </Upload>
-                                        },
-                                        delete: {
-                                            onClick: ()=>{this.deleteError(record.uid)}
-                                        },
-                                    }}
-                                    powerBtns={this.props.powerBtns}
-                            />
+                            <span className='text-btns' >
+                            {this.props.powerBtns.includes('reupload') && <Upload {...uploadP}><span className='text-btns-item'>{this.localObj.reupload}</span> </Upload>}
+                            {this.props.powerBtns.includes('delete') && <span className='text-btns-item' onClick={()=>{this.deleteError(record.uid)}}>{this.localObj.delete}</span>}
+                            </span>
                         </div>
                     }else if(record.uploadStatus=='uploading'){
                         return <div className="opt-btns"></div>
                     }else{
                         return <div className="opt-btns">
                             {this.props.type =='mdf' ?
-                                <div className="file-list-linetoolbar-container">{React.cloneElement(this.props.lineToolbar, { record })}</div>
-                                : <Btns localeCookie={this.props.localeCookie}
-                                        type='line'
-                                        btns={{
-                                            download: {
-                                                onClick: this.download
-                                            },
-                                            delete: {
-                                                onClick: this.deleteConfirm
-                                            },
-                                        }}
-                                        powerBtns={this.props.powerBtns}
-                            />}
-
-
+                                <div className="file-list-linetoolbar-container">{React.cloneElement(this.props.lineToolbar, { record })}</div> : 
+                                <span className='text-btns' >
+                                    {this.props.powerBtns.includes('download') && <span className='text-btns-item' onClick={this.download}>{this.localObj.download}</span>}
+                                    {this.props.powerBtns.includes('delete') && <span className='text-btns-item' onClick={this.deleteConfirm}>{this.localObj.delete}</span>}
+                                </span>
+                            }
                         </div>
                     }
                 }
@@ -537,22 +513,15 @@ class FileList extends Component {
                     }
                     <div className={`${clsfix}-btns`}>
                         {
-                            disabled?'':<Btns localeCookie={this.props.localeCookie}
-                                              powerBtns={this.props.powerBtns}
-                                              btns={{
-                                                upload:{
-                                                    node:<div>
-                                                        {toolbar}
-                                                        {uplaodBtnDisabled && type == 'mdf'
-                                                            ? uploadBut :
-                                                            <Upload {...uploadP}>
-                                                                {type == 'mdf' ? uploadBut : <Btns localeCookie={this.props.localeCookie} powerBtns={this.props.powerBtns} btns={{ upload:{} }}/>}
-                                                            </Upload>
-                                                        }
-                                                    </div>
-                                                },
-                                              }}
-                            />
+                            disabled ? '' : 
+                            <div>
+                                {toolbar}
+                                { this.props.powerBtns.includes('upload') && (uplaodBtnDisabled && type == 'mdf' ? uploadBut :
+                                    <Upload {...uploadP}>
+                                        {type == 'mdf' ? uploadBut : <Button colors="primary" onClick={this.delete}>{this.localObj.upload}</Button>}
+                                    </Upload>)
+                                }
+                            </div>
                         }
 
                     </div>
@@ -599,17 +568,8 @@ class FileList extends Component {
                             </Modal.Body>
 
                             <Modal.Footer className="pop_footer">
-                                <Btns localeCookie={this.props.localeCookie}
-                                    powerBtns={this.props.powerBtns}
-                                    btns={{
-                                        confirm:{
-                                            onClick:this.delete
-                                        },
-                                        cancel:{
-                                            onClick:this.cancelFn
-                                        },
-                                    }}
-                                />
+                                {this.props.powerBtns.includes('confirm') && <Button colors="primary" onClick={this.delete}>{this.localObj.confirm}</Button>}
+                                <Button onClick={this.cancelFn}>{this.localObj.cancel}</Button> 
                             </Modal.Footer>
                     </Modal>
                 </div>

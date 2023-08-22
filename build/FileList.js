@@ -28,10 +28,6 @@ var _i18n = require('./i18n.js');
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
-var _acBtns = require('ac-btns');
-
-var _acBtns2 = _interopRequireDefault(_acBtns);
-
 var _nextUi = require('@tinper/next-ui');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
@@ -39,8 +35,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "d
 function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -211,27 +205,27 @@ var FileList = function (_Component) {
                         return _react2["default"].createElement(
                             'div',
                             { className: 'opt-btns' },
-                            _react2["default"].createElement(_acBtns2["default"], _defineProperty({ localeCookie: _this.props.localeCookie,
-                                powerBtns: _this.props.powerBtns,
-                                type: 'line',
-                                btns: {
-                                    reupload: {
-                                        node: _react2["default"].createElement(
-                                            _nextUi.Upload,
-                                            uploadP,
-                                            _react2["default"].createElement(_acBtns2["default"], { localeCookie: _this.props.localeCookie,
-                                                powerBtns: _this.props.powerBtns,
-                                                type: 'line',
-                                                btns: { reupload: {} } })
-                                        )
-                                    },
-                                    "delete": {
-                                        onClick: function onClick() {
+                            _react2["default"].createElement(
+                                'span',
+                                { className: 'text-btns' },
+                                _this.props.powerBtns.includes('reupload') && _react2["default"].createElement(
+                                    _nextUi.Upload,
+                                    uploadP,
+                                    _react2["default"].createElement(
+                                        'span',
+                                        { className: 'text-btns-item' },
+                                        _this.localObj.reupload
+                                    ),
+                                    ' '
+                                ),
+                                _this.props.powerBtns.includes('delete') && _react2["default"].createElement(
+                                    'span',
+                                    { className: 'text-btns-item', onClick: function onClick() {
                                             _this.deleteError(record.uid);
-                                        }
-                                    }
-                                }
-                            }, 'powerBtns', _this.props.powerBtns))
+                                        } },
+                                    _this.localObj["delete"]
+                                )
+                            )
                         );
                     } else if (record.uploadStatus == 'uploading') {
                         return _react2["default"].createElement('div', { className: 'opt-btns' });
@@ -243,18 +237,20 @@ var FileList = function (_Component) {
                                 'div',
                                 { className: 'file-list-linetoolbar-container' },
                                 _react2["default"].cloneElement(_this.props.lineToolbar, { record: record })
-                            ) : _react2["default"].createElement(_acBtns2["default"], { localeCookie: _this.props.localeCookie,
-                                type: 'line',
-                                btns: {
-                                    download: {
-                                        onClick: _this.download
-                                    },
-                                    "delete": {
-                                        onClick: _this.deleteConfirm
-                                    }
-                                },
-                                powerBtns: _this.props.powerBtns
-                            })
+                            ) : _react2["default"].createElement(
+                                'span',
+                                { className: 'text-btns' },
+                                _this.props.powerBtns.includes('download') && _react2["default"].createElement(
+                                    'span',
+                                    { className: 'text-btns-item', onClick: _this.download },
+                                    _this.localObj.download
+                                ),
+                                _this.props.powerBtns.includes('delete') && _react2["default"].createElement(
+                                    'span',
+                                    { className: 'text-btns-item', onClick: _this.deleteConfirm },
+                                    _this.localObj["delete"]
+                                )
+                            )
                         );
                     }
                 }
@@ -388,23 +384,20 @@ var FileList = function (_Component) {
                 _react2["default"].createElement(
                     'div',
                     { className: clsfix + '-btns' },
-                    disabled ? '' : _react2["default"].createElement(_acBtns2["default"], { localeCookie: this.props.localeCookie,
-                        powerBtns: this.props.powerBtns,
-                        btns: {
-                            upload: {
-                                node: _react2["default"].createElement(
-                                    'div',
-                                    null,
-                                    toolbar,
-                                    uplaodBtnDisabled && type == 'mdf' ? uploadBut : _react2["default"].createElement(
-                                        _nextUi.Upload,
-                                        uploadP,
-                                        type == 'mdf' ? uploadBut : _react2["default"].createElement(_acBtns2["default"], { localeCookie: this.props.localeCookie, powerBtns: this.props.powerBtns, btns: { upload: {} } })
-                                    )
-                                )
-                            }
-                        }
-                    })
+                    disabled ? '' : _react2["default"].createElement(
+                        'div',
+                        null,
+                        toolbar,
+                        this.props.powerBtns.includes('upload') && (uplaodBtnDisabled && type == 'mdf' ? uploadBut : _react2["default"].createElement(
+                            _nextUi.Upload,
+                            uploadP,
+                            type == 'mdf' ? uploadBut : _react2["default"].createElement(
+                                _nextUi.Button,
+                                { colors: 'primary', onClick: this["delete"] },
+                                this.localObj.upload
+                            )
+                        ))
+                    )
                 )
             ),
             _react2["default"].createElement(
@@ -470,17 +463,16 @@ var FileList = function (_Component) {
                     _react2["default"].createElement(
                         _nextUi.Modal.Footer,
                         { className: 'pop_footer' },
-                        _react2["default"].createElement(_acBtns2["default"], { localeCookie: this.props.localeCookie,
-                            powerBtns: this.props.powerBtns,
-                            btns: {
-                                confirm: {
-                                    onClick: this["delete"]
-                                },
-                                cancel: {
-                                    onClick: this.cancelFn
-                                }
-                            }
-                        })
+                        this.props.powerBtns.includes('confirm') && _react2["default"].createElement(
+                            _nextUi.Button,
+                            { colors: 'primary', onClick: this["delete"] },
+                            this.localObj.confirm
+                        ),
+                        _react2["default"].createElement(
+                            _nextUi.Button,
+                            { onClick: this.cancelFn },
+                            this.localObj.cancel
+                        )
                     )
                 )
             )

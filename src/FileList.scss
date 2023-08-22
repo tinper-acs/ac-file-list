@@ -1,4 +1,3 @@
-@import '../node_modules/ac-btns/src/Btns.scss';
 $prefix: wui;
 $font-size: 12px;
 @keyframes beLong {
@@ -251,6 +250,12 @@ $font-size: 12px;
 
                 .opt-btns {
                     min-height: 20px;
+                    .text-btns span.text-btns-item {
+                        color: #0073e1;
+                        font-size: 12px; 
+                        margin-right: 8px;
+                        cursor: pointer; 
+                    }
                     .ac-btns {
 
                         button.ac-btns-item.#{$prefix}-button.ac-btns-write,
