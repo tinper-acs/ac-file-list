@@ -18,7 +18,12 @@ export default {
         delSuccess:'删除成功',
         delError:'删除失败',
         delSure:'确认要删除吗？',
-        interfaceError:'接口错误'
+        interfaceError:'接口错误',
+        confirm: "确认",
+        cancel: "取消",
+        upload: "上传",
+        reupload: "重新上传",
+        download: "下载"
     },
     zh_TW:{
         file:'附件',
@@ -39,7 +44,12 @@ export default {
         delSuccess:'刪除成功',
         delError:'刪除失敗',
         delSure:'確認要刪除嗎？',
-        interfaceError:'接口錯誤'
+        interfaceError:'接口錯誤',
+        confirm: "確認",
+        cancel: "取消",
+        upload: "上傳",
+        reupload: "重新上傳",
+        download: "下載"
     },
     en_US:{
         file:'File',
@@ -60,6 +70,11 @@ export default {
         delSuccess:'Delete successful',
         delError:'Delete failed',
         delSure:'Are you sure you want to delete?',
-        interfaceError:'Interface error'
+        interfaceError:'Interface error',
+        confirm: "Confirm",
+        cancel: "Cancel",
+        upload: "Upload",
+        reupload: "Re-upload",
+        download: "Download"
     }
 }
